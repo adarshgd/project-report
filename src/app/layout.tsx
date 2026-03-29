@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from "@/components/Header";
+import { getCurrentUser } from "@/app/actions/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,9 +19,6 @@ export const metadata: Metadata = {
   title: "Project Report",
   description: "A clean, production-ready project tracking application.",
 };
-
-import Header from "@/components/Header";
-import { getCurrentUser } from "@/app/actions/auth";
 
 export default async function RootLayout({
   children,
