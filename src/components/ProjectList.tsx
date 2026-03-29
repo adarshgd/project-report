@@ -118,7 +118,8 @@ export default function ProjectList({ projects }: { projects: any[] }) {
               <TableHead>Material Status</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Profit</TableHead>
-              <TableHead className="text-right">Project Cost</TableHead>
+              <TableHead className="text-right">Created By</TableHead>
+              <TableHead className="text-right">Updated By</TableHead>
               <TableHead className="text-right">Last Updated</TableHead>
               <TableHead className="text-right no-print">Actions</TableHead>
             </TableRow>
@@ -172,7 +173,12 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                       return formatCurrency(sellingExGst - costConsidered - mediatorCost);
                     })()}
                   </TableCell>
-                  <TableCell className="text-right">{formatCurrency(project.totalCost)}</TableCell>
+                  <TableCell className="text-right">
+                    <Badge variant="secondary" className="px-1 py-0 h-5 text-[10px]">{project.createdBy?.username || "???"}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Badge variant="outline" className="px-1 py-0 h-5 text-[10px]">{project.updatedBy?.username || "???"}</Badge>
+                  </TableCell>
                   <TableCell className="text-right">{new Date(project.updatedAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right no-print gap-2 flex justify-end">
                     <Link href={`/project/${project.id}`}>
