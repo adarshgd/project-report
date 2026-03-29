@@ -550,9 +550,24 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                 <span>Total ITC Claim</span>
                 <span>{formatCurrency(totals.itcClaim)}</span>
               </div>
-              <div className="flex justify-between text-sm text-blue-600">
-                <span>Total GST Paid (Out)</span>
-                <span>{formatCurrency(totals.sellGstAmount)}</span>
+              <div className="space-y-1 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
+                <div className="flex justify-between text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">
+                  <span>GST Breakdown</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Output GST (Sales)</span>
+                  <span>{formatCurrency(totals.sellGstAmount)}</span>
+                </div>
+                <div className="flex justify-between text-xs text-green-600">
+                  <span>Input GST (ITC)</span>
+                  <span>- {formatCurrency(totals.itcClaim)}</span>
+                </div>
+                <div className="flex justify-between text-xs font-bold border-t border-slate-100 pt-1 mt-1">
+                  <span>Net GST Payable</span>
+                  <span className={totals.sellGstAmount - totals.itcClaim > 0 ? "text-red-600" : "text-green-600"}>
+                    {formatCurrency(totals.sellGstAmount - totals.itcClaim)}
+                  </span>
+                </div>
               </div>
               
               <div className="flex justify-between text-sm border-t border-slate-200 pt-3">
@@ -606,13 +621,22 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                   <span className="text-muted-foreground">Buying (Incl GST)</span>
                   <span className="font-medium text-slate-900">{formatCurrency(totals.buyingAmountInclGst)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-green-700 bg-green-50 px-2 py-1 rounded">
-                  <span className="font-medium">Total ITC Claim</span>
-                  <span className="font-bold">{formatCurrency(totals.itcClaim)}</span>
-                </div>
-                <div className="flex justify-between text-sm text-blue-700 bg-blue-50 px-2 py-1 rounded">
-                  <span className="font-medium">GST Paid (Out)</span>
-                  <span className="font-bold">{formatCurrency(totals.sellGstAmount)}</span>
+                <div className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">GST Calculation</div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Output GST (Payable)</span>
+                    <span className="font-medium">{formatCurrency(totals.sellGstAmount)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-green-700">
+                    <span className="font-medium">Input GST (ITC Claim)</span>
+                    <span className="font-bold">- {formatCurrency(totals.itcClaim)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-bold border-t border-slate-300 pt-2 mt-1">
+                    <span>Net GST Payable</span>
+                    <span className={totals.sellGstAmount - totals.itcClaim > 0 ? "text-red-600" : "text-green-600"}>
+                      {formatCurrency(totals.sellGstAmount - totals.itcClaim)}
+                    </span>
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-3 pt-2">
