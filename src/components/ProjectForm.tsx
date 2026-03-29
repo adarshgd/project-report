@@ -306,6 +306,44 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
             </CardContent>
           </Card>
 
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>2. Stage Selector</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-2">
+                {["In Talk", "Deal Completed", "Amount Credited"].map((s) => (
+                  <Badge
+                    key={s}
+                    variant={stage === s ? "default" : "outline"}
+                    className="cursor-pointer px-4 py-2 text-sm"
+                    onClick={() => setStage(s)}
+                  >
+                    {s}
+                  </Badge>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>3. Material / Service Status</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-2">
+                {["In Progress", "Ordered", "Shipped", "Delivered"].map((s) => (
+                  <Badge
+                    key={s}
+                    variant={materialStatus === s ? "default" : "outline"}
+                    className="cursor-pointer px-4 py-2 text-sm"
+                    onClick={() => setMaterialStatus(s)}
+                  >
+                    {s}
+                  </Badge>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
           <Card>
             <CardHeader>
               <CardTitle>4. Mediators</CardTitle>
