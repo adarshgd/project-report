@@ -212,7 +212,8 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
         router.refresh();
       }
     } else {
-      alert("Failed to save project. Please check if all fields are valid.");
+      console.error("Save failed:", result);
+      alert(`Failed to save project. Error: ${result.error || "Please check if all fields are valid."}`);
     }
     setLoading(false);
   };
@@ -361,11 +362,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         />
                       </TableCell>
                       <TableCell>
-                        {contents.length > 1 && i !== contents.length - 1 && (
-                          <Button variant="ghost" size="icon" onClick={() => removeRow(setContents, contents, i)}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        )}
+                        <Button variant="ghost" size="icon" onClick={() => removeRow(setContents, contents, i)}>
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -404,11 +403,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <Input value={m.notes} onChange={(e) => handleMediatorChange(i, "notes", e.target.value)} />
                       </TableCell>
                       <TableCell>
-                        {mediators.length > 1 && i !== mediators.length - 1 && (
-                          <Button variant="ghost" size="icon" onClick={() => removeRow(setMediators, mediators, i)}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        )}
+                        <Button variant="ghost" size="icon" onClick={() => removeRow(setMediators, mediators, i)}>
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -504,11 +501,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                       <TableCell className="bg-blue-50 font-medium">{item.marginPercent.toFixed(1)}%</TableCell>
                       
                       <TableCell>
-                        {marginItems.length > 1 && i !== marginItems.length - 1 && (
-                          <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => removeRow(setMarginItems, marginItems, i)}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        )}
+                        <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => removeRow(setMarginItems, marginItems, i)}>
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
