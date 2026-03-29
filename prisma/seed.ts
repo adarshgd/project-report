@@ -26,7 +26,7 @@ async function main() {
           {
             itemService: 'Lighting',
             qty: 1,
-            sellUnitPriceExGst: 50000,
+            sellUnitPriceInclGst: 59000,
             sellGstPercent: 18,
             buyingAmountInclGst: 40000,
             buyGstPercent: 18,

@@ -41,9 +41,9 @@ model MarginLineItem {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
   projectId           String   @db.ObjectId
   itemService         String
-  qty                 Float
-  sellUnitPriceExGst  Float
-  sellGstPercent      Float
+  qty                  Float
+  sellUnitPriceInclGst Float
+  sellGstPercent       Float
   buyingAmountInclGst Float
   buyGstPercent       Float
   itcEligible         Boolean  @default(true)

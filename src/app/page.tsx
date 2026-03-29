@@ -42,7 +42,7 @@ export default async function DashboardPage() {
     (acc, p) =>
       acc +
       p.marginLineItems.reduce(
-        (sum, item) => sum + item.sellUnitPriceExGst * item.qty,
+        (sum, item) => sum + ((item.sellUnitPriceInclGst * item.qty) / (1 + item.sellGstPercent / 100)),
         0
       ),
     0

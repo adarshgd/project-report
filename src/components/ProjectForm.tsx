@@ -42,7 +42,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
           {
             itemService: "",
             qty: 1,
-            sellUnitPriceExGst: 0,
+            sellUnitPriceInclGst: 0,
             sellGstPercent: 0,
             buyingAmountInclGst: 0,
             buyGstPercent: 0,
@@ -75,12 +75,12 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
     newItems[index][field] = value;
     if (
       index === newItems.length - 1 &&
-      (newItems[index].itemService || newItems[index].sellUnitPriceExGst > 0 || newItems[index].buyingAmountInclGst > 0)
+      (newItems[index].itemService || newItems[index].sellUnitPriceInclGst > 0 || newItems[index].buyingAmountInclGst > 0)
     ) {
       newItems.push({
         itemService: "",
         qty: 1,
-        sellUnitPriceExGst: 0,
+        sellUnitPriceInclGst: 0,
         sellGstPercent: 0,
         buyingAmountInclGst: 0,
         buyGstPercent: 0,
@@ -101,15 +101,15 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
     return marginItems.map((item) => {
       // Validate inputs safely to not crash
       const qty = Number(item.qty) || 0;
-      const sellUnitPriceExGst = Number(item.sellUnitPriceExGst) || 0;
+      const sellUnitPriceInclGst = Number(item.sellUnitPriceInclGst) || 0;
       const sellGstPercent = Number(item.sellGstPercent) || 0;
       const buyingAmountInclGst = Number(item.buyingAmountInclGst) || 0;
       const buyGstPercent = Number(item.buyGstPercent) || 0;
       const itcEligible = !!item.itcEligible;
 
-      const sellingAmountExGst = qty * sellUnitPriceExGst;
-      const sellGstAmount = sellingAmountExGst * (sellGstPercent / 100);
-      const sellTotalInclGst = sellingAmountExGst + sellGstAmount;
+      const sellTotalInclGst = qty * sellUnitPriceInclGst;
+      const sellingAmountExGst = sellTotalInclGst / (1 + sellGstPercent / 100);
+      const sellGstAmount = sellTotalInclGst - sellingAmountExGst;
 
       const buyingAmountExGst = buyingAmountInclGst / (1 + buyGstPercent / 100);
       const buyGstAmount = buyingAmountInclGst - buyingAmountExGst;
@@ -178,11 +178,11 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
     const cleanedContents = contents.filter((c) => c.description.trim() !== "");
     const cleanedMediators = mediators.filter((m) => m.name.trim() !== "" || m.amount > 0);
     const cleanedMargins = marginItems.filter(
-      (m) => m.itemService.trim() !== "" || m.sellUnitPriceExGst > 0 || m.buyingAmountInclGst > 0
+      (m) => m.itemService.trim() !== "" || m.sellUnitPriceInclGst > 0 || m.buyingAmountInclGst > 0
     ).map(m => ({
       ...m,
       qty: Number(m.qty) || 1,
-      sellUnitPriceExGst: Number(m.sellUnitPriceExGst) || 0,
+      sellUnitPriceInclGst: Number(m.sellUnitPriceInclGst) || 0,
       sellGstPercent: Number(m.sellGstPercent) || 0,
       buyingAmountInclGst: Number(m.buyingAmountInclGst) || 0,
       buyGstPercent: Number(m.buyGstPercent) || 0,
@@ -403,7 +403,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                     <TableHead className="w-[40px]">Sr.</TableHead>
                     <TableHead className="w-[180px]">Item / Service</TableHead>
                     <TableHead className="w-[80px]">Qty</TableHead>
-                    <TableHead className="w-[100px]">Sell Prc. Ex GST</TableHead>
+                    <TableHead className="w-[100px]">Sell Prc. Incl GST</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Sell Amt Ex GST</TableHead>
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
                     <TableHead className="w-[90px] bg-slate-50">Sell GST Amt</TableHead>
@@ -431,7 +431,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <Input className="h-8 text-xs px-1" type="number" value={item.qty || ''} onChange={(e) => handleMarginChange(i, "qty", Number(e.target.value))} />
                       </TableCell>
                       <TableCell>
-                        <Input className="h-8 text-xs p-1" type="number" value={item.sellUnitPriceExGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceExGst", Number(e.target.value))} />
+                        <Input className="h-8 text-xs p-1" type="number" value={item.sellUnitPriceInclGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceInclGst", Number(e.target.value))} />
                       </TableCell>
                       <TableCell className="bg-slate-50">{formatCurrency(item.sellingAmountExGst)}</TableCell>
                       <TableCell>
