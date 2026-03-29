@@ -402,7 +402,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                   <TableRow>
                     <TableHead className="w-[40px]">Sr.</TableHead>
                     <TableHead className="w-[180px]">Item / Service</TableHead>
-                    <TableHead className="w-[80px]">Qty</TableHead>
+                    <TableHead className="w-[100px]">Qty</TableHead>
                     <TableHead className="w-[100px]">Sell Prc. Incl GST</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Sell Amt Ex GST</TableHead>
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
@@ -428,7 +428,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <Input className="h-8 text-xs" value={item.itemService} onChange={(e) => handleMarginChange(i, "itemService", e.target.value)} />
                       </TableCell>
                       <TableCell>
-                        <Input className="h-8 text-xs px-1" type="number" value={item.qty || ''} onChange={(e) => handleMarginChange(i, "qty", Number(e.target.value))} />
+                        <Input className="h-8 text-xs px-2" type="number" value={item.qty || ''} onChange={(e) => handleMarginChange(i, "qty", Number(e.target.value))} />
                       </TableCell>
                       <TableCell>
                         <Input className="h-8 text-xs p-1" type="number" value={item.sellUnitPriceInclGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceInclGst", Number(e.target.value))} />
