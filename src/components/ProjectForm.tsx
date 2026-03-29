@@ -430,12 +430,13 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <Input 
                           className="h-8 text-xs px-2 min-w-[100px]" 
                           type="number" 
+                          step="any"
                           value={item.qty === 0 ? '0' : (item.qty || '')} 
                           onChange={(e) => handleMarginChange(i, "qty", e.target.value === '' ? 0 : Number(e.target.value))} 
                         />
                       </TableCell>
                       <TableCell>
-                        <Input className="h-8 text-xs p-1" type="number" value={item.sellUnitPriceInclGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceInclGst", Number(e.target.value))} />
+                        <Input className="h-8 text-xs p-1" type="number" step="any" value={item.sellUnitPriceInclGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceInclGst", Number(e.target.value))} />
                       </TableCell>
                       <TableCell className="bg-slate-50">{formatCurrency(item.sellingAmountExGst)}</TableCell>
                       <TableCell>
@@ -450,7 +451,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                       <TableCell className="bg-blue-50 font-medium border-r-4 border-slate-300">{formatCurrency(item.sellTotalInclGst)}</TableCell>
                       
                       <TableCell>
-                        <Input className="h-8 text-xs p-1" type="number" value={item.buyingAmountInclGst || ''} onChange={(e) => handleMarginChange(i, "buyingAmountInclGst", Number(e.target.value))} />
+                        <Input className="h-8 text-xs p-1" type="number" step="any" value={item.buyingAmountInclGst || ''} onChange={(e) => handleMarginChange(i, "buyingAmountInclGst", Number(e.target.value))} />
                       </TableCell>
                       <TableCell className="bg-blue-50 font-medium">{formatCurrency(item.totalBuyingInclGst)}</TableCell>
                       <TableCell>
