@@ -31,6 +31,7 @@ export async function saveProject(projectId: string | null, data: any) {
           contents: { create: contents },
           mediators: { create: mediators },
           marginLineItems: { create: marginLineItems },
+          updatedById: userId,
         },
       });
       revalidatePath("/");
@@ -48,6 +49,8 @@ export async function saveProject(projectId: string | null, data: any) {
           contents: { create: contents },
           mediators: { create: mediators },
           marginLineItems: { create: marginLineItems },
+          createdById: userId,
+          updatedById: userId,
         },
       });
       revalidatePath("/");
