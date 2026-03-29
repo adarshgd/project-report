@@ -10,7 +10,23 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback_secr
 
 export async function login(username: string, password: any) {
   try {
-    const user = await prisma.user.findUnique({ where: { username } });
+    let user = await prisma.user.findUnique({ where: { username } });
+    
+    // Auto-seed first admin if DB is empty
+    if (!user && username === "admin") {
+      const userCount = await prisma.user.count();
+      if (userCount === 0) {
+        const hashedPassword = await bcrypt.hash("Adarsh@8680", 10);
+        user = await prisma.user.create({
+          data: {
+            username: "admin",
+            password: hashedPassword,
+            role: "admin"
+          }
+        });
+      }
+    }
+
     if (!user) return { success: false, error: "Invalid credentials" };
 
     const passwordMatch = await bcrypt.compare(password, user.password);
