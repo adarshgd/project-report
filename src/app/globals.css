@@ -138,3 +138,16 @@
     @apply font-sans;
   }
 }
+
+@keyframes blink-yellow {
+  0%, 100% {
+    background-color: var(--color-yellow-50, #fefce8);
+  }
+  50% {
+    background-color: var(--color-yellow-200, #fef08a);
+  }
+}
+
+.animate-blink-yellow {
+  animation: blink-yellow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
