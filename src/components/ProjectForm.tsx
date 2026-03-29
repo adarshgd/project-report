@@ -349,7 +349,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
               <CardTitle>4. Mediators</CardTitle>
               <CardDescription>Record any mediators and their cuts. Auto-totals at bottom.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
