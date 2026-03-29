@@ -402,7 +402,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                   <TableRow>
                     <TableHead className="w-[40px]">Sr.</TableHead>
                     <TableHead className="w-[180px]">Item / Service</TableHead>
-                    <TableHead className="w-[100px]">Qty</TableHead>
+                    <TableHead className="w-[120px]">Qty</TableHead>
                     <TableHead className="w-[100px]">Sell Prc. Incl GST</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Sell Amt Ex GST</TableHead>
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
