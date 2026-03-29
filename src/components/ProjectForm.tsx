@@ -473,7 +473,12 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <Input className="h-8 text-xs" value={item.itemService} onChange={(e) => handleMarginChange(i, "itemService", e.target.value)} />
                       </TableCell>
                       <TableCell>
-                        <Input className="h-8 text-xs px-2" type="number" value={item.qty || ''} onChange={(e) => handleMarginChange(i, "qty", Number(e.target.value))} />
+                        <Input 
+                          className="h-8 text-xs px-2" 
+                          type="number" 
+                          value={item.qty === 0 ? '0' : (item.qty || '')} 
+                          onChange={(e) => handleMarginChange(i, "qty", e.target.value === '' ? 0 : Number(e.target.value))} 
+                        />
                       </TableCell>
                       <TableCell>
                         <Input className="h-8 text-xs p-1" type="number" value={item.sellUnitPriceInclGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceInclGst", Number(e.target.value))} />
