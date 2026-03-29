@@ -137,7 +137,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                   className={
                     project.status === "Completed" 
                       ? "bg-green-50 hover:bg-green-100" 
-                      : "bg-yellow-50 hover:bg-yellow-100"
+                      : "bg-yellow-50 hover:bg-yellow-100 animate-blink-yellow"
                   }
                 >
                   <TableCell className="font-medium">{project.name}</TableCell>
