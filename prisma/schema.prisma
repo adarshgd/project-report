@@ -3,50 +3,47 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
 }
 
 model Project {
-  id              String             @id @default(cuid())
-  name            String
-  totalCost       Float
-  stage           String
-  materialStatus  String
-  notes           String?
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  contents        ProjectContent[]
-  mediators       Mediator[]
-  marginLineItems MarginLineItem[]
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  stage          String
+  materialStatus String
+  totalCost      Float
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  contents       ProjectContent[]
+  mediators      Mediator[]
+  margins        MarginLineItem[]
 }
 
 model ProjectContent {
-  id          String   @id @default(cuid())
-  projectId   String
-  description String
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId  String   @db.ObjectId
+  title      String
+  totalValue Float
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Mediator {
-  id        String   @id @default(cuid())
-  projectId String
-  name      String
-  amount    Float
-  notes     String?
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId  String   @db.ObjectId
+  name       String
+  amount     Float
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model MarginLineItem {
-  id                  String   @id @default(cuid())
-  projectId           String
-  itemService         String
-  qty                 Float
-  sellUnitPriceExGst  Float
-  sellGstPercent      Float
-  buyingAmountInclGst Float
-  buyGstPercent       Float
-  itcEligible         Boolean
-  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId  String   @db.ObjectId
+  supplier   String
+  value      Float
+  payment    Float
+  sellingGst Float
+  buyingGst  Float
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
