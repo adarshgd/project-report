@@ -13,7 +13,7 @@ export default function LoginPage() {
           className="w-full h-auto mb-4" 
           priority 
         />
-        <p className="text-slate-500 font-medium italic tracking-widest text-xs uppercase">Innovation for Education</p>
+
       </div>
       <LoginForm />
     </div>
