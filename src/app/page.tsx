@@ -36,32 +36,34 @@ export default async function DashboardPage() {
     },
   });
 
+  const projectsAny = projects as any[];
+
   const totalProjects = projects.length;
   const projectsInTalk = projects.filter((p) => p.stage === "In Talk").length;
   const dealsCompleted = projects.filter(
     (p) => p.stage === "Deal Completed" || p.stage === "Amount Credited"
   ).length;
-
-  const totalRevenue = projects.reduce(
-    (acc, p) =>
+ 
+  const totalRevenue = projectsAny.reduce(
+    (acc: number, p: any) =>
       acc +
       p.marginLineItems.reduce(
-        (sum, item) => sum + ((item.sellUnitPriceInclGst * item.qty) / (1 + item.sellGstPercent / 100)),
+        (sum: number, item: any) => sum + ((item.sellUnitPriceInclGst * item.qty) / (1 + item.sellGstPercent / 100)),
         0
       ),
     0
   );
-
-  const totalProfit = projects.reduce((acc, p) => {
+ 
+  const totalProfit = projectsAny.reduce((acc: number, p: any) => {
     const sellingExGst = p.marginLineItems.reduce(
-      (sum, item) => sum + ((item.sellUnitPriceInclGst * item.qty) / (1 + item.sellGstPercent / 100)),
+      (sum: number, item: any) => sum + ((item.sellUnitPriceInclGst * item.qty) / (1 + item.sellGstPercent / 100)),
       0
     );
-    const costConsidered = p.marginLineItems.reduce((sum, item) => {
+    const costConsidered = p.marginLineItems.reduce((sum: number, item: any) => {
       const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
       return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
     }, 0);
-    const mediatorCost = p.mediators.reduce((sum, m) => sum + m.amount, 0);
+    const mediatorCost = p.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
     return acc + (sellingExGst - costConsidered - mediatorCost);
   }, 0);
 
