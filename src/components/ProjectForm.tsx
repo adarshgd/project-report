@@ -577,6 +577,10 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                 <span>Total ITC Claim</span>
                 <span>{formatCurrency(totals.itcClaim)}</span>
               </div>
+              <div className="flex justify-between text-sm text-blue-600">
+                <span>Total GST Paid (Out)</span>
+                <span>{formatCurrency(totals.sellGstAmount)}</span>
+              </div>
               
               <div className="flex justify-between text-sm border-t border-slate-200 pt-3">
                 <span className="font-medium">Gross Profit</span>
