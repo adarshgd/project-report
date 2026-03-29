@@ -165,8 +165,8 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                         0
                       );
                       const costConsidered = project.marginLineItems.reduce((sum: number, item: any) => {
-                        const buyingExGst = item.buyingAmountInclGst / (1 + item.buyGstPercent / 100);
-                        return sum + (item.itcEligible ? buyingExGst : item.buyingAmountInclGst);
+                        const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
+                        return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
                       }, 0);
                       const mediatorCost = project.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
                       return formatCurrency(sellingExGst - costConsidered - mediatorCost);

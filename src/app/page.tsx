@@ -56,8 +56,8 @@ export default async function DashboardPage() {
       0
     );
     const costConsidered = p.marginLineItems.reduce((sum, item) => {
-      const buyingExGst = item.buyingAmountInclGst / (1 + item.buyGstPercent / 100);
-      return sum + (item.itcEligible ? buyingExGst : item.buyingAmountInclGst);
+      const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
+      return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
     }, 0);
     const mediatorCost = p.mediators.reduce((sum, m) => sum + m.amount, 0);
     return acc + (sellingExGst - costConsidered - mediatorCost);
