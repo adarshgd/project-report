@@ -578,11 +578,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
           </div>
           
           <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100">
+            <DialogTrigger render={<Button variant="outline" size="sm" className="gap-2 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100" />}>
                 <Eye className="h-4 w-4" />
                 View Summary
-              </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[95vw] rounded-xl overflow-y-auto max-h-[85vh]">
               <DialogHeader>
