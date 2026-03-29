@@ -18,12 +18,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, FileText, IndianRupee, Handshake, Users } from "lucide-react";
+import { PlusCircle, FileText, IndianRupee, Handshake, Users, LogOut, Settings } from "lucide-react";
 import ProjectList from "@/components/ProjectList";
+import { logout, getCurrentUser } from "@/app/actions/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
+  const user = await getCurrentUser();
   const projects = await prisma.project.findMany({
     orderBy: { updatedAt: "desc" },
     include: {
@@ -66,6 +68,18 @@ export default async function DashboardPage() {
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Project Report</h2>
         <div className="flex items-center space-x-2">
+          {user?.role === "admin" && (
+            <Link href="/admin">
+              <Button variant="outline">
+                <Settings className="mr-2 h-4 w-4" /> Admin
+              </Button>
+            </Link>
+          )}
+          <form action={logout}>
+            <Button variant="ghost" type="submit">
+              <LogOut className="mr-2 h-4 w-4" /> Logout
+            </Button>
+          </form>
           <Link href="/project/new">
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />

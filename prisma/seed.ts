@@ -1,14 +1,30 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient()
 
 async function main() {
+  // Clear existing users
+  await prisma.user.deleteMany({});
+  
+  // Create default admin
+  const hashedPassword = await bcrypt.hash("Adarsh@8680", 10);
+  await prisma.user.create({
+    data: {
+      username: 'admin',
+      password: hashedPassword,
+      role: 'admin'
+    }
+  });
+
+  // Seed projects
   await prisma.project.create({
     data: {
       name: 'Alpha Marketing Event',
       totalCost: 150000,
       stage: 'In Talk',
       materialStatus: 'In Progress',
+      status: 'In Progress',
       notes: 'Initial discussion phase for the new product launch.',
       contents: {
         create: [
@@ -34,16 +50,6 @@ async function main() {
           }
         ]
       }
-    }
-  })
-
-  await prisma.project.create({
-    data: {
-      name: 'Beta TV Commercial',
-      totalCost: 500000,
-      stage: 'Deal Completed',
-      materialStatus: 'Delivered',
-      notes: 'Finalized contract for the commercial.',
     }
   })
 
