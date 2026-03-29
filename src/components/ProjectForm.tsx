@@ -446,7 +446,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                   <TableRow>
                     <TableHead className="w-[40px]">Sr.</TableHead>
                     <TableHead className="w-[180px]">Item / Service</TableHead>
-                    <TableHead className="w-[120px]">Qty</TableHead>
+                    <TableHead className="w-[120px] min-w-[120px]">Qty</TableHead>
                     <TableHead className="w-[100px]">Sell Prc. Incl GST</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Sell Amt Ex GST</TableHead>
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
@@ -472,9 +472,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                       <TableCell>
                         <Input className="h-8 text-xs" value={item.itemService} onChange={(e) => handleMarginChange(i, "itemService", e.target.value)} />
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="min-w-[120px]">
                         <Input 
-                          className="h-8 text-xs px-2" 
+                          className="h-8 text-xs px-2 min-w-[100px]" 
                           type="number" 
                           value={item.qty === 0 ? '0' : (item.qty || '')} 
                           onChange={(e) => handleMarginChange(i, "qty", e.target.value === '' ? 0 : Number(e.target.value))} 
