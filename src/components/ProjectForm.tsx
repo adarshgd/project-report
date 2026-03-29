@@ -22,6 +22,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
   const [notes, setNotes] = useState(initialData?.notes || "");
   const [stage, setStage] = useState(initialData?.stage || "In Talk");
   const [materialStatus, setMaterialStatus] = useState(initialData?.materialStatus || "In Progress");
+  const [status, setStatus] = useState(initialData?.status || "In Progress");
 
   // Dynamic Content Array States
   // Initialize with at least 1 blank row
@@ -195,6 +196,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
       stage,
       materialStatus,
       notes,
+      status,
       contents: cleanedContents,
       mediators: cleanedMediators,
       marginLineItems: cleanedMargins,
@@ -223,6 +225,10 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
     }
   };
 
+  const handleExport = () => {
+    window.print();
+  };
+
   return (
     <div className="flex h-screen overflow-hidden flex-col">
       {/* Top Header / Action Bar */}
@@ -237,6 +243,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
               <Trash2 className="mr-2 h-4 w-4" /> Delete
             </Button>
           )}
+          <Button size="sm" variant="outline" onClick={handleExport} disabled={loading}>
+            <StickyNote className="mr-2 h-4 w-4" /> Export
+          </Button>
           <Button size="sm" onClick={handleSave} disabled={loading || !name}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <Save className="mr-2 h-4 w-4" /> Save Project
@@ -260,9 +269,30 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                 <label className="text-sm font-medium">Total Project Cost</label>
                 <Input type="number" value={totalCost || ''} onChange={(e) => setTotalCost(Number(e.target.value))} />
               </div>
-              <div className="space-y-2 lg:col-span-3">
+              <div className="space-y-2 lg:col-span-2">
                 <label className="text-sm font-medium">Notes / Remarks</label>
                 <Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any special instructions..." />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Project Status</label>
+                <div className="flex gap-2">
+                  <Button 
+                    variant={status === "In Progress" ? "default" : "outline"}
+                    className={status === "In Progress" ? "bg-yellow-500 hover:bg-yellow-600 text-white" : ""}
+                    onClick={() => setStatus("In Progress")}
+                    size="sm"
+                  >
+                    In Progress
+                  </Button>
+                  <Button 
+                    variant={status === "Completed" ? "default" : "outline"}
+                    className={status === "Completed" ? "bg-green-600 hover:bg-green-700 text-white" : ""}
+                    onClick={() => setStatus("Completed")}
+                    size="sm"
+                  >
+                    Completed
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

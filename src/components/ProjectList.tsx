@@ -116,6 +116,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
               <TableHead>Project Name</TableHead>
               <TableHead>Stage</TableHead>
               <TableHead>Material Status</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Project Cost</TableHead>
               <TableHead className="text-right">Last Updated</TableHead>
               <TableHead className="text-right no-print">Actions</TableHead>
@@ -130,13 +131,31 @@ export default function ProjectList({ projects }: { projects: any[] }) {
               </TableRow>
             ) : (
               filteredProjects.map((project) => (
-                <TableRow key={project.id}>
+                <TableRow 
+                  key={project.id}
+                  className={
+                    project.status === "Completed" 
+                      ? "bg-green-50 hover:bg-green-100" 
+                      : "bg-yellow-50 hover:bg-yellow-100"
+                  }
+                >
                   <TableCell className="font-medium">{project.name}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{project.stage}</Badge>
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary">{project.materialStatus}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      className={
+                        project.status === "Completed" 
+                          ? "bg-green-600 hover:bg-green-600 text-white" 
+                          : "bg-yellow-500 hover:bg-yellow-500 text-white"
+                      }
+                    >
+                      {project.status || "In Progress"}
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-right">{formatCurrency(project.totalCost)}</TableCell>
                   <TableCell className="text-right">{new Date(project.updatedAt).toLocaleDateString()}</TableCell>
