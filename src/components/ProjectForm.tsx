@@ -112,11 +112,12 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
       const sellingAmountExGst = sellTotalInclGst / (1 + sellGstPercent / 100);
       const sellGstAmount = sellTotalInclGst - sellingAmountExGst;
 
-      const buyingAmountExGst = buyingAmountInclGst / (1 + buyGstPercent / 100);
-      const buyGstAmount = buyingAmountInclGst - buyingAmountExGst;
+      const totalBuyingInclGst = qty * buyingAmountInclGst;
+      const buyingAmountExGst = totalBuyingInclGst / (1 + buyGstPercent / 100);
+      const buyGstAmount = totalBuyingInclGst - buyingAmountExGst;
 
       const itcClaim = itcEligible ? buyGstAmount : 0;
-      const costConsidered = itcEligible ? buyingAmountExGst : buyingAmountInclGst;
+      const costConsidered = itcEligible ? buyingAmountExGst : totalBuyingInclGst;
 
       const profitAfterGstItc = sellingAmountExGst - costConsidered;
       const marginPercent = sellingAmountExGst > 0 ? (profitAfterGstItc / sellingAmountExGst) * 100 : 0;
@@ -126,6 +127,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
         sellingAmountExGst,
         sellGstAmount,
         sellTotalInclGst,
+        totalBuyingInclGst,
         buyingAmountExGst,
         buyGstAmount,
         itcClaim,
@@ -142,8 +144,8 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
         sellingAmountExGst: acc.sellingAmountExGst + item.sellingAmountExGst,
         sellGstAmount: acc.sellGstAmount + item.sellGstAmount,
         sellTotalInclGst: acc.sellTotalInclGst + item.sellTotalInclGst,
-        buyingAmountInclGst: acc.buyingAmountInclGst + Number(item.buyingAmountInclGst || 0),
-        buyingAmountExGst: acc.buyingAmountExGst + item.buyingAmountExGst,
+        buyingAmountInclGst: acc.buyingAmountInclGst + (item.totalBuyingInclGst || 0),
+        buyingAmountExGst: acc.buyingAmountExGst + (item.buyingAmountExGst || 0),
         buyGstAmount: acc.buyGstAmount + item.buyGstAmount,
         itcClaim: acc.itcClaim + item.itcClaim,
         costConsidered: acc.costConsidered + item.costConsidered,
@@ -450,7 +452,8 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
                     <TableHead className="w-[90px] bg-slate-50">Sell GST Amt</TableHead>
                     <TableHead className="w-[100px] bg-blue-50 border-r-4 border-slate-300">Sell Tot. Incl GST</TableHead>
-                    <TableHead className="w-[100px]">Buy Amt Incl GST</TableHead>
+                    <TableHead className="w-[100px]">Buy Unit Prc Incl GST</TableHead>
+                    <TableHead className="w-[100px] bg-blue-50">Total Buy Incl GST</TableHead>
                     <TableHead className="w-[80px]">Buy GST %</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Buy Amt Ex GST</TableHead>
                     <TableHead className="w-[90px] bg-slate-50">Buy GST Amt</TableHead>
@@ -490,6 +493,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                       <TableCell>
                         <Input className="h-8 text-xs p-1" type="number" value={item.buyingAmountInclGst || ''} onChange={(e) => handleMarginChange(i, "buyingAmountInclGst", Number(e.target.value))} />
                       </TableCell>
+                      <TableCell className="bg-blue-50 font-medium">{formatCurrency(item.totalBuyingInclGst)}</TableCell>
                       <TableCell>
                         <Select value={item.buyGstPercent?.toString() || "0"} onValueChange={(val) => handleMarginChange(i, "buyGstPercent", Number(val))}>
                           <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="%" /></SelectTrigger>
