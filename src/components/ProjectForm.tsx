@@ -170,7 +170,6 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
   const handleSave = async () => {
     setLoading(true);
     // filter out the empty trailing rows
-    const cleanedContents = contents.filter((c) => c.description.trim() !== "");
     const cleanedMediators = mediators.filter((m) => m.name.trim() !== "" || m.amount > 0);
     const cleanedMargins = marginItems.filter(
       (m) => m.itemService.trim() !== "" || m.sellUnitPriceInclGst > 0 || m.buyingAmountInclGst > 0
