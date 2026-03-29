@@ -25,11 +25,6 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
   const [status, setStatus] = useState(initialData?.status || "In Progress");
 
   // Dynamic Content Array States
-  // Initialize with at least 1 blank row
-  const [contents, setContents] = useState<any[]>(
-    initialData?.contents?.length > 0 ? initialData.contents : [{ description: "" }]
-  );
-  
   const [mediators, setMediators] = useState<any[]>(
     initialData?.mediators?.length > 0
       ? initialData.mediators
@@ -53,15 +48,6 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
   );
 
   // Auto-add rows handlers
-  const handleContentChange = (index: number, value: string) => {
-    const newContents = [...contents];
-    newContents[index].description = value;
-    if (index === newContents.length - 1 && value.trim() !== "") {
-      newContents.push({ description: "" });
-    }
-    setContents(newContents);
-  };
-
   const handleMediatorChange = (index: number, field: string, value: any) => {
     const newMeds = [...mediators];
     newMeds[index] = { ...newMeds[index], [field]: value };
@@ -205,7 +191,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
       materialStatus,
       notes,
       status,
-      contents: cleanedContents,
+      contents: [],
       mediators: cleanedMediators,
       marginLineItems: cleanedMargins,
     };
@@ -321,84 +307,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
             </CardContent>
           </Card>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>2. Stage Selector</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-wrap gap-2">
-                {["In Talk", "Deal Completed", "Amount Credited"].map((s) => (
-                  <Badge
-                    key={s}
-                    variant={stage === s ? "default" : "outline"}
-                    className="cursor-pointer px-4 py-2 text-sm"
-                    onClick={() => setStage(s)}
-                  >
-                    {s}
-                  </Badge>
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>3. Material / Service Status</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-wrap gap-2">
-                {["In Progress", "Ordered", "Shipped", "Delivered"].map((s) => (
-                  <Badge
-                    key={s}
-                    variant={materialStatus === s ? "default" : "outline"}
-                    className="cursor-pointer px-4 py-2 text-sm"
-                    onClick={() => setMaterialStatus(s)}
-                  >
-                    {s}
-                  </Badge>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-
           <Card>
             <CardHeader>
-              <CardTitle>4. Project Contents</CardTitle>
-              <CardDescription>Enter the items involved. A new row is automatically added when you type.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[80px]">Sr. No</TableHead>
-                    <TableHead>Content / Item Description</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {contents.map((c, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{i + 1}</TableCell>
-                      <TableCell>
-                        <Input
-                          value={c.description}
-                          onChange={(e) => handleContentChange(i, e.target.value)}
-                          placeholder="e.g. Graphic Designs"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="icon" onClick={() => removeRow(setContents, contents, i)}>
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>5. Mediators</CardTitle>
+              <CardTitle>4. Mediators</CardTitle>
               <CardDescription>Record any mediators and their cuts. Auto-totals at bottom.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -443,7 +354,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
 
           <Card>
             <CardHeader className="flex flex-row items-center gap-2">
-              <CardTitle>6. Project Margin Table</CardTitle>
+              <CardTitle>5. Project Margin Table</CardTitle>
               <span className="text-sm font-normal text-muted-foreground mr-auto">- Complex computation</span>
             </CardHeader>
             <CardContent className="overflow-x-auto">
