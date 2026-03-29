@@ -543,6 +543,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                     <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.sellGstAmount)}</TableCell>
                     <TableCell className="text-blue-700 border-r-4 border-slate-300">{formatCurrency(totals.sellTotalInclGst)}</TableCell>
+                    <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.buyingAmountInclGst)}</TableCell>
                     <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.buyingAmountExGst)}</TableCell>
