@@ -21,7 +21,7 @@ async function main() {
           { name: 'John Doe', amount: 5000 }
         ]
       },
-      margins: {
+      marginLineItems: {
         create: [
           {
             supplier: 'AV Corp',

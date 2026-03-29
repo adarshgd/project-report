@@ -18,7 +18,7 @@ model Project {
   updatedAt      DateTime         @updatedAt
   contents       ProjectContent[]
   mediators      Mediator[]
-  margins        MarginLineItem[]
+  marginLineItems MarginLineItem[]
 }
 
 model ProjectContent {
