@@ -109,7 +109,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
         </div>
       </div>
 
-      <div className="rounded-md border bg-white overflow-hidden print-friendly">
+      <div className="rounded-md border bg-white overflow-x-auto print-friendly">
         <Table>
           <TableHeader>
             <TableRow>
