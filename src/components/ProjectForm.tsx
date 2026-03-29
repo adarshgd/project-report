@@ -209,6 +209,8 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
       } else {
         router.refresh();
       }
+    } else {
+      alert("Failed to save project. Please check if all fields are valid.");
     }
     setLoading(false);
   };
@@ -400,12 +402,12 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                   <TableRow>
                     <TableHead className="w-[40px]">Sr.</TableHead>
                     <TableHead className="w-[180px]">Item / Service</TableHead>
-                    <TableHead className="w-[60px]">Qty</TableHead>
+                    <TableHead className="w-[80px]">Qty</TableHead>
                     <TableHead className="w-[100px]">Sell Prc. Ex GST</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Sell Amt Ex GST</TableHead>
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
                     <TableHead className="w-[90px] bg-slate-50">Sell GST Amt</TableHead>
-                    <TableHead className="w-[100px] bg-blue-50">Sell Tot. Incl GST</TableHead>
+                    <TableHead className="w-[100px] bg-blue-50 border-r-4 border-slate-300">Sell Tot. Incl GST</TableHead>
                     <TableHead className="w-[100px]">Buy Amt Incl GST</TableHead>
                     <TableHead className="w-[80px]">Buy GST %</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Buy Amt Ex GST</TableHead>
@@ -441,7 +443,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         </Select>
                       </TableCell>
                       <TableCell className="bg-slate-50">{formatCurrency(item.sellGstAmount)}</TableCell>
-                      <TableCell className="bg-blue-50 font-medium">{formatCurrency(item.sellTotalInclGst)}</TableCell>
+                      <TableCell className="bg-blue-50 font-medium border-r-4 border-slate-300">{formatCurrency(item.sellTotalInclGst)}</TableCell>
                       
                       <TableCell>
                         <Input className="h-8 text-xs p-1" type="number" value={item.buyingAmountInclGst || ''} onChange={(e) => handleMarginChange(i, "buyingAmountInclGst", Number(e.target.value))} />
@@ -485,7 +487,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                     <TableCell>{formatCurrency(totals.sellingAmountExGst)}</TableCell>
                     <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.sellGstAmount)}</TableCell>
-                    <TableCell className="text-blue-700">{formatCurrency(totals.sellTotalInclGst)}</TableCell>
+                    <TableCell className="text-blue-700 border-r-4 border-slate-300">{formatCurrency(totals.sellTotalInclGst)}</TableCell>
                     <TableCell>{formatCurrency(totals.buyingAmountInclGst)}</TableCell>
                     <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.buyingAmountExGst)}</TableCell>

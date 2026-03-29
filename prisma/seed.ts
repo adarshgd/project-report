@@ -12,23 +12,25 @@ async function main() {
       notes: 'Initial discussion phase for the new product launch.',
       contents: {
         create: [
-          { title: 'Stage setup', totalValue: 50000 },
-          { title: 'Audio/Visual equipment', totalValue: 100000 }
+          { description: 'Stage setup' },
+          { description: 'Audio/Visual equipment' }
         ]
       },
       mediators: {
         create: [
-          { name: 'John Doe', amount: 5000 }
+          { name: 'John Doe', amount: 5000, notes: 'Contact for AV' }
         ]
       },
       marginLineItems: {
         create: [
           {
-            supplier: 'AV Corp',
-            value: 50000,
-            payment: 40000,
-            sellingGst: 18,
-            buyingGst: 18
+            itemService: 'Lighting',
+            qty: 1,
+            sellUnitPriceExGst: 50000,
+            sellGstPercent: 18,
+            buyingAmountInclGst: 40000,
+            buyGstPercent: 18,
+            itcEligible: true
           }
         ]
       }

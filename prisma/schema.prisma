@@ -22,11 +22,10 @@ model Project {
 }
 
 model ProjectContent {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  projectId  String   @db.ObjectId
-  title      String
-  totalValue Float
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId   String   @db.ObjectId
+  description String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Mediator {
@@ -34,16 +33,19 @@ model Mediator {
   projectId  String   @db.ObjectId
   name       String
   amount     Float
+  notes      String?
   project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model MarginLineItem {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  projectId  String   @db.ObjectId
-  supplier   String
-  value      Float
-  payment    Float
-  sellingGst Float
-  buyingGst  Float
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId           String   @db.ObjectId
+  itemService         String
+  qty                 Float
+  sellUnitPriceExGst  Float
+  sellGstPercent      Float
+  buyingAmountInclGst Float
+  buyGstPercent       Float
+  itcEligible         Boolean  @default(true)
+  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
