@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getCurrentUser } from "./actions/auth";
 
 export async function saveProject(projectId: string | null, data: any) {
   try {
@@ -9,6 +10,9 @@ export async function saveProject(projectId: string | null, data: any) {
     const contents = data.contents?.map(({ id, projectId, ...rest }: any) => rest) || [];
     const mediators = data.mediators?.map(({ id, projectId, ...rest }: any) => rest) || [];
     const marginLineItems = data.marginLineItems?.map(({ id, projectId, ...rest }: any) => rest) || [];
+
+    const user = await getCurrentUser();
+    const userId = user?.id;
 
     if (projectId) {
       await prisma.projectContent.deleteMany({ where: { projectId } });
