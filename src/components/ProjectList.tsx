@@ -176,7 +176,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                   <TableCell className="text-right">{new Date(project.updatedAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right no-print gap-2 flex justify-end">
                     <Link href={`/project/${project.id}`}>
-                      <Button variant="ghost" size="sm">Open</Button>
+                      <Button variant="outline" size="sm">Open</Button>
                     </Link>
                   </TableCell>
                 </TableRow>
