@@ -246,19 +246,26 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
         <Button variant="ghost" size="icon" onClick={() => router.push("/")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <span className="font-semibold">{initialData ? "Edit Project" : "New Project"}</span>
-        <div className="ml-auto flex gap-2">
+        <span className="font-semibold text-sm md:text-base whitespace-nowrap">{initialData ? "Edit Project" : "New Project"}</span>
+        <div className="ml-auto flex gap-1 md:gap-2">
           {initialData && (
-            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={loading}>
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
+            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={loading} className="h-8 px-2 md:px-3">
+              <Trash2 className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Delete</span>
             </Button>
           )}
-          <Button size="sm" variant="outline" onClick={handleExport} disabled={loading}>
-            <StickyNote className="mr-2 h-4 w-4" /> Export
+          <Button size="sm" variant="outline" onClick={handleExport} disabled={loading} className="h-8 px-2 md:px-3">
+            <StickyNote className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Export</span>
           </Button>
-          <Button size="sm" onClick={handleSave} disabled={loading || !name}>
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            <Save className="mr-2 h-4 w-4" /> Save Project
+          <Button size="sm" onClick={handleSave} disabled={loading || !name} className="h-8 px-2 md:px-3 bg-slate-900">
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin md:mr-2" />
+            ) : (
+              <Save className="h-4 w-4 md:mr-2" />
+            )}
+            <span className="hidden md:inline">{initialData ? "Save Changes" : "Create Project"}</span>
+            <span className="md:hidden">Save</span>
           </Button>
         </div>
       </header>
