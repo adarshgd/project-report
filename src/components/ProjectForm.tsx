@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { deleteProject, saveProject } from "@/app/actions";
 import { formatCurrency } from "@/lib/utils";
-import { Trash2, Save, ArrowLeft, Loader2, StickyNote } from "lucide-react";
+import { Trash2, Save, ArrowLeft, Loader2, StickyNote, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function ProjectForm({ initialData }: { initialData: any }) {
@@ -512,8 +513,8 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
           <div className="h-10" />
         </div>
 
-        {/* Right / Bottom Sticky Summary Panel */}
-        <div className="w-80 border-l bg-slate-50 p-6 overflow-y-auto hidden lg:block">
+        {/* Right / Bottom Sticky Summary Panel (Desktop Only) */}
+        <div className="w-80 border-l bg-slate-50 p-6 overflow-y-auto hidden lg:block no-print">
           <div className="sticky top-0 space-y-6">
             <div>
               <h3 className="text-lg font-semibold tracking-tight">Summary</h3>
@@ -567,6 +568,74 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Mobile Sticky Bottom Bar (Visible only on < lg screens) */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 flex items-center justify-between shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-40 no-print">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Net Profit</span>
+            <span className="text-xl font-black text-green-800 leading-none">{formatCurrency(netAfterMediator)}</span>
+          </div>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100">
+                <Eye className="h-4 w-4" />
+                View Summary
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-[95vw] rounded-xl overflow-y-auto max-h-[85vh]">
+              <DialogHeader>
+                <DialogTitle className="flex justify-between items-center border-b pb-4">
+                  <span>Project Summary</span>
+                  <Badge variant="outline">{stage}</Badge>
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-4 pt-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Selling (Ex GST)</span>
+                  <span className="font-medium text-slate-900">{formatCurrency(totals.sellingAmountExGst)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Buying (Incl GST)</span>
+                  <span className="font-medium text-slate-900">{formatCurrency(totals.buyingAmountInclGst)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-green-700 bg-green-50 px-2 py-1 rounded">
+                  <span className="font-medium">Total ITC Claim</span>
+                  <span className="font-bold">{formatCurrency(totals.itcClaim)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                  <span className="font-medium">GST Paid (Out)</span>
+                  <span className="font-bold">{formatCurrency(totals.sellGstAmount)}</span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <div className="border rounded-lg p-3 bg-slate-50 text-center">
+                    <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Gross Profit</p>
+                    <p className="text-lg font-black text-slate-900">{formatCurrency(totals.profitAfterGstItc)}</p>
+                  </div>
+                  <div className="border rounded-lg p-3 bg-slate-50 text-center">
+                    <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Gross Margin</p>
+                    <p className="text-lg font-black text-blue-700">{overallMarginPercent.toFixed(1)}%</p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between text-sm text-red-600 font-medium px-2">
+                  <span>Mediators Payment</span>
+                  <span>- {formatCurrency(totalMediatorCost)}</span>
+                </div>
+
+                <div className="mt-4 p-4 rounded-xl bg-green-800 text-white flex justify-between items-center shadow-lg">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase font-bold opacity-70">Final Net Profit</span>
+                    <span className="text-2xl font-black">{formatCurrency(netAfterMediator)}</span>
+                  </div>
+                  <Badge className="bg-white/20 hover:bg-white/30 text-white border-white/40 px-3">Verified</Badge>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </main>
     </div>
