@@ -368,7 +368,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <Input value={m.name} onChange={(e) => handleMediatorChange(i, "name", e.target.value)} placeholder="Mediator name" />
                       </TableCell>
                       <TableCell>
-                        <Input type="number" value={m.amount || ''} onChange={(e) => handleMediatorChange(i, "amount", Number(e.target.value))} />
+                        <Input type="number" step="any" value={m.amount || ''} onChange={(e) => handleMediatorChange(i, "amount", e.target.value === '' ? 0 : Number(e.target.value))} />
                       </TableCell>
                       <TableCell>
                         <Input value={m.notes} onChange={(e) => handleMediatorChange(i, "notes", e.target.value)} />
