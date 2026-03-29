@@ -64,29 +64,35 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
 
   const handleMediatorChange = (index: number, field: string, value: any) => {
     const newMeds = [...mediators];
-    newMeds[index][field] = value;
-    if (index === newMeds.length - 1 && (newMeds[index].name || newMeds[index].amount > 0)) {
-      newMeds.push({ name: "", amount: 0, notes: "" });
+    newMeds[index] = { ...newMeds[index], [field]: value };
+    
+    // Add row if last row is modified
+    if (index === newMeds.length - 1) {
+      const item = newMeds[index];
+      if (item.name.trim() !== "" || Number(item.amount) !== 0 || item.notes.trim() !== "") {
+        newMeds.push({ name: "", amount: 0, notes: "" });
+      }
     }
     setMediators(newMeds);
   };
 
   const handleMarginChange = (index: number, field: string, value: any) => {
     const newItems = [...marginItems];
-    newItems[index][field] = value;
-    if (
-      index === newItems.length - 1 &&
-      (newItems[index].itemService || newItems[index].sellUnitPriceInclGst > 0 || newItems[index].buyingAmountInclGst > 0)
-    ) {
-      newItems.push({
-        itemService: "",
-        qty: 1,
-        sellUnitPriceInclGst: 0,
-        sellGstPercent: 0,
-        buyingAmountInclGst: 0,
-        buyGstPercent: 0,
-        itcEligible: true,
-      });
+    newItems[index] = { ...newItems[index], [field]: value };
+    
+    if (index === newItems.length - 1) {
+      const item = newItems[index];
+      if (item.itemService.trim() !== "" || Number(item.sellUnitPriceInclGst) !== 0 || Number(item.buyingAmountInclGst) !== 0) {
+        newItems.push({
+          itemService: "",
+          qty: 1,
+          sellUnitPriceInclGst: 0,
+          sellGstPercent: 0,
+          buyingAmountInclGst: 0,
+          buyGstPercent: 0,
+          itcEligible: true,
+        });
+      }
     }
     setMarginItems(newItems);
   };
