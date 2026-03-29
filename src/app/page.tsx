@@ -31,6 +31,8 @@ export default async function DashboardPage() {
     include: {
       marginLineItems: true,
       mediators: true,
+      createdBy: { select: { username: true } },
+      updatedBy: { select: { username: true } },
     },
   });
 
