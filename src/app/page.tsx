@@ -35,9 +35,6 @@ export default async function DashboardPage() {
   const totalProjects = projects.length;
   const projectsInTalk = projects.filter((p) => p.stage === "In Talk").length;
   const dealsCompleted = projects.filter(
-    (p) => p.stage === "Deal Completed" || p.stage === "Amount Credited"
-  ).length;
-
   const totalRevenue = projects.reduce(
     (acc, p) =>
       acc +
@@ -47,6 +44,19 @@ export default async function DashboardPage() {
       ),
     0
   );
+
+  const totalProfit = projects.reduce((acc, p) => {
+    const sellingExGst = p.marginLineItems.reduce(
+      (sum, item) => sum + ((item.sellUnitPriceInclGst * item.qty) / (1 + item.sellGstPercent / 100)),
+      0
+    );
+    const costConsidered = p.marginLineItems.reduce((sum, item) => {
+      const buyingExGst = item.buyingAmountInclGst / (1 + item.buyGstPercent / 100);
+      return sum + (item.itcEligible ? buyingExGst : item.buyingAmountInclGst);
+    }, 0);
+    const mediatorCost = p.mediators.reduce((sum, m) => sum + m.amount, 0);
+    return acc + (sellingExGst - costConsidered - mediatorCost);
+  }, 0);
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -92,13 +102,13 @@ export default async function DashboardPage() {
             <div className="text-2xl font-bold">{dealsCompleted}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-green-50 border-green-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Projects In Talk</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-green-900">Total Profit (Net)</CardTitle>
+            <IndianRupee className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{projectsInTalk}</div>
+            <div className="text-2xl font-bold text-green-700">{formatCurrency(totalProfit)}</div>
           </CardContent>
         </Card>
       </div>

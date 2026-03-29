@@ -117,6 +117,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
               <TableHead>Stage</TableHead>
               <TableHead>Material Status</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="text-right">Profit</TableHead>
               <TableHead className="text-right">Project Cost</TableHead>
               <TableHead className="text-right">Last Updated</TableHead>
               <TableHead className="text-right no-print">Actions</TableHead>
@@ -156,6 +157,20 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                     >
                       {project.status || "In Progress"}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="text-right font-bold text-green-700">
+                    {(() => {
+                      const sellingExGst = project.marginLineItems.reduce(
+                        (sum: number, item: any) => sum + ((item.sellUnitPriceInclGst * item.qty) / (1 + item.sellGstPercent / 100)),
+                        0
+                      );
+                      const costConsidered = project.marginLineItems.reduce((sum: number, item: any) => {
+                        const buyingExGst = item.buyingAmountInclGst / (1 + item.buyGstPercent / 100);
+                        return sum + (item.itcEligible ? buyingExGst : item.buyingAmountInclGst);
+                      }, 0);
+                      const mediatorCost = project.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
+                      return formatCurrency(sellingExGst - costConsidered - mediatorCost);
+                    })()}
                   </TableCell>
                   <TableCell className="text-right">{formatCurrency(project.totalCost)}</TableCell>
                   <TableCell className="text-right">{new Date(project.updatedAt).toLocaleDateString()}</TableCell>
