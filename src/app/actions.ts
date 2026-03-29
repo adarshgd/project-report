@@ -5,6 +5,11 @@ import { revalidatePath } from "next/cache";
 
 export async function saveProject(projectId: string | null, data: any) {
   try {
+    // Sanitize data: remove IDs and projectIds from nested items to avoid Prisma conflicts
+    const contents = data.contents?.map(({ id, projectId, ...rest }: any) => rest) || [];
+    const mediators = data.mediators?.map(({ id, projectId, ...rest }: any) => rest) || [];
+    const marginLineItems = data.marginLineItems?.map(({ id, projectId, ...rest }: any) => rest) || [];
+
     if (projectId) {
       await prisma.projectContent.deleteMany({ where: { projectId } });
       await prisma.mediator.deleteMany({ where: { projectId } });
@@ -19,9 +24,9 @@ export async function saveProject(projectId: string | null, data: any) {
           materialStatus: data.materialStatus,
           status: data.status || "In Progress",
           notes: data.notes || null,
-          contents: { create: data.contents },
-          mediators: { create: data.mediators },
-          marginLineItems: { create: data.marginLineItems },
+          contents: { create: contents },
+          mediators: { create: mediators },
+          marginLineItems: { create: marginLineItems },
         },
       });
       revalidatePath("/");
@@ -36,9 +41,9 @@ export async function saveProject(projectId: string | null, data: any) {
           materialStatus: data.materialStatus,
           status: data.status || "In Progress",
           notes: data.notes || null,
-          contents: { create: data.contents },
-          mediators: { create: data.mediators },
-          marginLineItems: { create: data.marginLineItems },
+          contents: { create: contents },
+          mediators: { create: mediators },
+          marginLineItems: { create: marginLineItems },
         },
       });
       revalidatePath("/");
