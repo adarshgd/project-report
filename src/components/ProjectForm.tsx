@@ -432,9 +432,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                       </TableCell>
                     </TableRow>
                   ))}
-                  <TableRow className="font-bold">
-                    <TableCell colSpan={2} className="text-right">Total Mediator Cost:</TableCell>
-                    <TableCell colSpan={3} className="text-left text-blue-600">{formatCurrency(totalMediatorCost)}</TableCell>
+                  <TableRow className="font-bold border-t-2 border-slate-900 bg-slate-50">
+                    <TableCell colSpan={2} className="text-right py-3 uppercase tracking-wider">Total Mediator Cost:</TableCell>
+                    <TableCell colSpan={3} className="text-left text-blue-700 font-black">{formatCurrency(totalMediatorCost)}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -537,8 +537,8 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                       </TableCell>
                     </TableRow>
                   ))}
-                  <TableRow className="font-bold border-t-2 border-slate-300">
-                    <TableCell colSpan={4} className="text-right py-4">TOTALS</TableCell>
+                  <TableRow className="font-bold border-t-2 border-slate-900 bg-slate-100/50">
+                    <TableCell colSpan={4} className="text-right py-4 text-slate-900 uppercase tracking-wider">TOTALS</TableCell>
                     <TableCell>{formatCurrency(totals.sellingAmountExGst)}</TableCell>
                     <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.sellGstAmount)}</TableCell>
