@@ -66,26 +66,17 @@ export default async function DashboardPage() {
   }, 0);
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Project Report</h2>
-        <div className="flex items-center space-x-2">
-          {user?.role === "admin" && (
-            <Link href="/admin">
-              <Button variant="outline">
-                <Settings className="mr-2 h-4 w-4" /> Admin
-              </Button>
-            </Link>
-          )}
-          <form action={logout}>
-            <Button variant="ghost" type="submit">
-              <LogOut className="mr-2 h-4 w-4" /> Logout
-            </Button>
-          </form>
+    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Project Dashboard</h2>
+          <p className="text-sm text-muted-foreground hidden md:block">Real-time overview of your educational projects</p>
+        </div>
+        <div className="flex items-center space-x-2 self-end md:self-auto">
           <Link href="/project/new">
-            <Button>
+            <Button size="sm" className="md:size-default">
               <PlusCircle className="mr-2 h-4 w-4" />
-              Create Project
+              <span className="inline">Create Project</span>
             </Button>
           </Link>
         </div>

@@ -19,11 +19,16 @@ export const metadata: Metadata = {
   description: "A clean, production-ready project tracking application.",
 };
 
-export default function RootLayout({
+import Header from "@/components/Header";
+import { getCurrentUser } from "@/app/actions/auth";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getCurrentUser();
+
   return (
     <html
       lang="en"
@@ -31,7 +36,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-slate-50">
         <TooltipProvider>
-          <Header />
+          <Header user={user} />
           <main className="flex-1">
             {children}
           </main>
