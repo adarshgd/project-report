@@ -205,6 +205,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
     const result = await saveProject(initialData?.id || null, data);
     
     if (result.success) {
+      alert("Project saved successfully!");
       // Navigate to the newly created project's URL instead of /new, or dashboard
       if (!initialData) {
         router.push("/");
@@ -232,8 +233,22 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
 
   return (
     <div className="flex h-screen overflow-hidden flex-col">
+      <style jsx global>{`
+        @media print {
+          .no-print, header, .w-80 { display: none !important; }
+          .overflow-hidden { overflow: visible !important; height: auto !important; }
+          .flex-1 { flex: none !important; width: 100% !important; }
+          main { display: block !important; }
+          .p-6 { padding: 0 !important; }
+          .space-y-6 > * { margin-top: 0 !important; margin-bottom: 2rem !important; }
+          .card { border: none !important; shadow: none !important; }
+          .min-w-[1500px] { min-width: 100% !important; font-size: 10px !important; }
+          table { width: 100% !important; table-layout: auto !important; }
+          .lg\:block { display: none !important; }
+        }
+      `}</style>
       {/* Top Header / Action Bar */}
-      <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-6 lg:h-[60px]">
+      <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-6 lg:h-[60px] no-print">
         <Button variant="ghost" size="icon" onClick={() => router.push("/")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>

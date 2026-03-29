@@ -35,6 +35,9 @@ export default async function DashboardPage() {
   const totalProjects = projects.length;
   const projectsInTalk = projects.filter((p) => p.stage === "In Talk").length;
   const dealsCompleted = projects.filter(
+    (p) => p.stage === "Deal Completed" || p.stage === "Amount Credited"
+  ).length;
+
   const totalRevenue = projects.reduce(
     (acc, p) =>
       acc +
