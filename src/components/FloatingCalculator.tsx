@@ -132,7 +132,28 @@ export default function FloatingCalculator() {
 
   const handlePercent = () => {
     if (display === "Error") return;
-    setDisplay((Number(display) / 100).toString());
+    
+    // If there's an active expression (like "100 + "), calculating % should be based on the first number.
+    // e.g., "100 + 18%" becomes "100 + 18" (where 18 is 18% of 100), results in 118.
+    if (expression) {
+      try {
+        const cleanExpr = expression.replace(/[^-+/*0-9.]/g, "").trim();
+        // Get the last number before the operator
+        const parts = cleanExpr.split(/[-+/*]/).filter(p => p !== "");
+        const baseValue = parseFloat(parts[parts.length - 1]);
+        
+        if (!isNaN(baseValue)) {
+          const percentValue = baseValue * (parseFloat(display) / 100);
+          setDisplay(Number(percentValue.toFixed(4)).toString());
+        } else {
+          setDisplay((Number(display) / 100).toString());
+        }
+      } catch (e) {
+        setDisplay((Number(display) / 100).toString());
+      }
+    } else {
+      setDisplay((Number(display) / 100).toString());
+    }
     setHasCalculated(true);
   };
 
