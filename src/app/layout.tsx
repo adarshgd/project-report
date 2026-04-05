@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from "@/components/Header";
+import FloatingCalculator from "@/components/FloatingCalculator";
 import { getCurrentUser } from "@/app/actions/auth";
 
 const geistSans = Geist({
@@ -38,6 +39,7 @@ export default async function RootLayout({
           <main className="flex-1">
             {children}
           </main>
+          <FloatingCalculator />
         </TooltipProvider>
       </body>
     </html>
