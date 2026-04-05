@@ -53,6 +53,25 @@ export default async function DashboardPage() {
       ),
     0
   );
+
+  const totalValueInclGst = projectsAny.reduce(
+    (acc: number, p: any) =>
+      acc +
+      p.marginLineItems.reduce(
+        (sum: number, item: any) => sum + (item.sellUnitPriceInclGst * item.qty),
+        0
+      ),
+    0
+  );
+
+  const totalProjectCost = projectsAny.reduce((acc: number, p: any) => {
+    const costConsidered = p.marginLineItems.reduce((sum: number, item: any) => {
+      const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
+      return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
+    }, 0);
+    const mediatorCost = p.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
+    return acc + (costConsidered + mediatorCost);
+  }, 0);
  
   const totalProfit = projectsAny.reduce((acc: number, p: any) => {
     const sellingExGst = p.marginLineItems.reduce(
@@ -85,7 +104,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
@@ -97,13 +116,24 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-slate-600">
               Total Projected Revenue (Ex GST)
             </CardTitle>
             <IndianRupee className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-blue-50 border-blue-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-blue-900">
+              Total Project Value (Incl GST)
+            </CardTitle>
+            <IndianRupee className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-800">{formatCurrency(totalValueInclGst)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -113,6 +143,15 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{dealsCompleted}</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-orange-50 border-orange-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-orange-900">Total Project Cost (Net)</CardTitle>
+            <IndianRupee className="h-4 w-4 text-orange-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-700">{formatCurrency(totalProjectCost)}</div>
           </CardContent>
         </Card>
         <Card className="bg-green-50 border-green-200">

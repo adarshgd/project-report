@@ -27,23 +27,36 @@ export default function ProjectList({ projects }: { projects: any[] }) {
       "Project Name",
       "Stage",
       "Material Status",
-      "Total Cost",
+      "Project Value (Incl GST)",
+      "Project Cost",
+      "Profit",
       "Notes",
       "Created At",
       "Last Updated",
     ].join(",");
     
-    const rows = filteredProjects.map((p) =>
-      [
+    const rows = filteredProjects.map((p) => {
+      const value = p.marginLineItems.reduce((sum: number, item: any) => sum + (item.sellUnitPriceInclGst * item.qty), 0);
+      const costExGst = p.marginLineItems.reduce((sum: number, item: any) => {
+        const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
+        return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
+      }, 0);
+      const mediatorCost = p.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
+      const cost = costExGst + mediatorCost;
+      const profit = value / (1 + (p.marginLineItems[0]?.sellGstPercent || 0) / 100) - cost; // Rough profit calc for CSV
+
+      return [
         `"${p.name}"`,
         `"${p.stage}"`,
         `"${p.materialStatus}"`,
-        p.totalCost,
+        value,
+        cost,
+        profit,
         `"${p.notes || ""}"`,
         `"${new Date(p.createdAt).toLocaleDateString()}"`,
         `"${new Date(p.updatedAt).toLocaleDateString()}"`,
-      ].join(",")
-    );
+      ].join(",");
+    });
     
     const csvData = [headers, ...rows].join("\n");
     const blob = new Blob([csvData], { type: "text/csv" });
@@ -117,6 +130,8 @@ export default function ProjectList({ projects }: { projects: any[] }) {
               <TableHead>Stage</TableHead>
               <TableHead>Material Status</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="text-right">Project Value</TableHead>
+              <TableHead className="text-right">Project Cost</TableHead>
               <TableHead className="text-right">Profit</TableHead>
               <TableHead className="text-right">Created By</TableHead>
               <TableHead className="text-right">Updated By</TableHead>
@@ -159,18 +174,34 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                       {project.status || "In Progress"}
                     </Badge>
                   </TableCell>
+                  <TableCell className="text-right font-medium text-blue-600">
+                    {(() => {
+                      const value = project.marginLineItems.reduce((sum: number, item: any) => sum + (item.sellUnitPriceInclGst * item.qty), 0);
+                      return formatCurrency(value);
+                    })()}
+                  </TableCell>
+                  <TableCell className="text-right font-medium text-orange-600">
+                    {(() => {
+                      const costExGst = project.marginLineItems.reduce((sum: number, item: any) => {
+                        const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
+                        return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
+                      }, 0);
+                      const mediatorCost = project.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
+                      return formatCurrency(costExGst + mediatorCost);
+                    })()}
+                  </TableCell>
                   <TableCell className="text-right font-bold text-green-700">
                     {(() => {
                       const sellingExGst = project.marginLineItems.reduce(
                         (sum: number, item: any) => sum + ((item.sellUnitPriceInclGst * item.qty) / (1 + item.sellGstPercent / 100)),
                         0
                       );
-                      const costConsidered = project.marginLineItems.reduce((sum: number, item: any) => {
+                      const costExGst = project.marginLineItems.reduce((sum: number, item: any) => {
                         const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
                         return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
                       }, 0);
                       const mediatorCost = project.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
-                      return formatCurrency(sellingExGst - costConsidered - mediatorCost);
+                      return formatCurrency(sellingExGst - costExGst - mediatorCost);
                     })()}
                   </TableCell>
                   <TableCell className="text-right">
