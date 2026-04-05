@@ -433,7 +433,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                   <TableRow>
                     <TableHead className="w-[60px] border-r">Sr.</TableHead>
                     <TableHead className="w-[120px] bg-yellow-50 font-bold text-yellow-900 ring-2 ring-yellow-200">Sell Tot (Invoice Incl GST)</TableHead>
-                    <TableHead className="w-[110px] bg-slate-50 font-semibold text-slate-900 border-x border-slate-200">Qty</TableHead>
+                    <TableHead className="w-[120px] bg-slate-50 font-bold text-slate-900 border-x border-slate-200">Qty</TableHead>
                     <TableHead className="w-[100px] bg-slate-100 italic">Sell Prc (Unit)</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Sell Amt Ex GST</TableHead>
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
@@ -495,7 +495,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         </TableCell>
                         <TableCell>
                           <Input 
-                            className="h-8 text-xs px-1 font-semibold text-center border-slate-300 focus:ring-blue-500" 
+                            className="h-8 text-sm px-2 font-bold text-right border-slate-400 bg-white min-w-[90px]" 
                             type="number" 
                             step="any"
                             value={item.qty === 0 ? '0' : (item.qty || '')} 
