@@ -138,12 +138,15 @@ export default function FloatingCalculator() {
     if (expression) {
       try {
         const cleanExpr = expression.replace(/[^-+/*0-9.]/g, "").trim();
-        // Get the last number before the operator
-        const parts = cleanExpr.split(/[-+/*]/).filter(p => p !== "");
-        const baseValue = parseFloat(parts[parts.length - 1]);
+        // If the expression ends with an operator, we evaluate everything before it
+        const baseExpr = /[-+/*]$/.test(cleanExpr) ? cleanExpr.slice(0, -1) : cleanExpr;
+        
+        // eslint-disable-next-line no-eval
+        const baseValue = parseFloat(eval(baseExpr));
         
         if (!isNaN(baseValue)) {
-          const percentValue = baseValue * (parseFloat(display) / 100);
+          const percentFactor = parseFloat(display) / 100;
+          const percentValue = baseValue * percentFactor;
           setDisplay(Number(percentValue.toFixed(4)).toString());
         } else {
           setDisplay((Number(display) / 100).toString());
