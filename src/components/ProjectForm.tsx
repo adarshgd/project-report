@@ -434,7 +434,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <TableCell rowSpan={2} className="text-center font-bold border-r border-slate-200 text-slate-800 bg-slate-100/60 sticky left-0 z-10 w-[60px]">
                           {i + 1}
                         </TableCell>
-                        <TableCell colSpan={18} className="p-2">
+                        <TableCell colSpan={17} className="p-2">
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-tighter shrink-0 mb-[-2px]">Item / Service Name:</span>
                             <Input 
