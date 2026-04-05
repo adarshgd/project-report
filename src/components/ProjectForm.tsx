@@ -34,11 +34,15 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
 
   const [marginItems, setMarginItems] = useState<any[]>(
     initialData?.marginLineItems?.length > 0
-      ? initialData.marginLineItems
+      ? initialData.marginLineItems.map((m: any) => ({
+          ...m,
+          sellTotalInclGst: m.sellTotalInclGst || m.qty * m.sellUnitPriceInclGst
+        }))
       : [
           {
             itemService: "",
             qty: 1,
+            sellTotalInclGst: 0,
             sellUnitPriceInclGst: 0,
             sellGstPercent: 0,
             buyingAmountInclGst: 0,
@@ -65,14 +69,23 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
 
   const handleMarginChange = (index: number, field: string, value: any) => {
     const newItems = [...marginItems];
-    newItems[index] = { ...newItems[index], [field]: value };
+    const item = { ...newItems[index], [field]: value };
+    
+    // Sync logic for Invoice Total / Qty / Unit Price
+    if (field === "sellTotalInclGst" || field === "qty") {
+      const total = Number(field === "sellTotalInclGst" ? value : item.sellTotalInclGst) || 0;
+      const qty = Number(field === "qty" ? value : item.qty) || 0;
+      item.sellUnitPriceInclGst = qty > 0 ? total / qty : 0;
+    }
+
+    newItems[index] = item;
     
     if (index === newItems.length - 1) {
-      const item = newItems[index];
-      if (item.itemService.trim() !== "" || Number(item.sellUnitPriceInclGst) !== 0 || Number(item.buyingAmountInclGst) !== 0) {
+      if (item.itemService.trim() !== "" || Number(item.sellTotalInclGst) !== 0 || Number(item.buyingAmountInclGst) !== 0) {
         newItems.push({
           itemService: "",
           qty: 1,
+          sellTotalInclGst: 0,
           sellUnitPriceInclGst: 0,
           sellGstPercent: 0,
           buyingAmountInclGst: 0,
@@ -173,10 +186,11 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
     // filter out the empty trailing rows
     const cleanedMediators = mediators.filter((m) => m.name.trim() !== "" || m.amount > 0);
     const cleanedMargins = marginItems.filter(
-      (m) => m.itemService.trim() !== "" || m.sellUnitPriceInclGst > 0 || m.buyingAmountInclGst > 0
+      (m) => m.itemService.trim() !== "" || Number(m.sellTotalInclGst) > 0 || Number(m.buyingAmountInclGst) > 0
     ).map(m => ({
       ...m,
       qty: Number(m.qty) || 1,
+      sellTotalInclGst: Number(m.sellTotalInclGst) || 0,
       sellUnitPriceInclGst: Number(m.sellUnitPriceInclGst) || 0,
       sellGstPercent: Number(m.sellGstPercent) || 0,
       buyingAmountInclGst: Number(m.buyingAmountInclGst) || 0,
@@ -407,8 +421,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[60px] border-r">Sr.</TableHead>
-                    <TableHead className="w-[120px] min-w-[120px]">Qty</TableHead>
-                    <TableHead className="w-[100px]">Sell Prc. Incl GST</TableHead>
+                    <TableHead className="w-[120px] bg-yellow-50 font-bold text-yellow-900 ring-2 ring-yellow-200">Sell Tot (Invoice Incl GST)</TableHead>
+                    <TableHead className="w-[80px]">Qty</TableHead>
+                    <TableHead className="w-[100px] bg-slate-100 italic">Sell Prc (Unit)</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Sell Amt Ex GST</TableHead>
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
                     <TableHead className="w-[90px] bg-slate-50">Sell GST Amt</TableHead>
@@ -434,7 +449,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <TableCell rowSpan={2} className="text-center font-bold border-r border-slate-200 text-slate-800 bg-slate-100/60 sticky left-0 z-10 w-[60px]">
                           {i + 1}
                         </TableCell>
-                        <TableCell colSpan={17} className="p-2">
+                        <TableCell colSpan={18} className="p-2">
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-tighter shrink-0 mb-[-2px]">Item / Service Name:</span>
                             <Input 
@@ -456,17 +471,29 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                       </TableRow>
                       {/* Calculations Row */}
                       <TableRow className="hover:bg-transparent border-b-2 border-slate-200">
-                        <TableCell className="min-w-[120px]">
+                        <TableCell className="bg-yellow-50/30 ring-inset ring-1 ring-yellow-100">
                           <Input 
-                            className="h-8 text-xs px-2 min-w-[100px]" 
+                            className="h-8 text-xs font-bold border-yellow-200 bg-white" 
+                            type="number" 
+                            step="any"
+                            value={item.sellTotalInclGst || ''} 
+                            onChange={(e) => handleMarginChange(i, "sellTotalInclGst", Number(e.target.value))} 
+                            placeholder="Invoice Total"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input 
+                            className="h-8 text-xs px-2" 
                             type="number" 
                             step="any"
                             value={item.qty === 0 ? '0' : (item.qty || '')} 
                             onChange={(e) => handleMarginChange(i, "qty", e.target.value === '' ? 0 : Number(e.target.value))} 
                           />
                         </TableCell>
-                        <TableCell>
-                          <Input className="h-8 text-xs p-1" type="number" step="any" value={item.sellUnitPriceInclGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceInclGst", Number(e.target.value))} />
+                        <TableCell className="bg-slate-100">
+                          <div className="h-8 px-2 flex items-center text-xs font-medium text-slate-500 italic bg-slate-50/50 border rounded-sm border-slate-200">
+                            {Number(item.sellUnitPriceInclGst).toFixed(2)}
+                          </div>
                         </TableCell>
                         <TableCell className="bg-slate-50">{formatCurrency(item.sellingAmountExGst)}</TableCell>
                         <TableCell>
@@ -514,6 +541,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                   ))}
                   <TableRow className="font-bold border-t-2 border-slate-900 bg-slate-100/50">
                     <TableCell colSpan={2} className="text-right py-4 text-slate-900 uppercase tracking-wider">TOTALS</TableCell>
+                    <TableCell></TableCell>
                     <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.sellingAmountExGst)}</TableCell>
                     <TableCell></TableCell>

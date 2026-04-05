@@ -47,6 +47,7 @@ model MarginLineItem {
   projectId           String   @db.ObjectId
   itemService         String
   qty                  Float
+  sellTotalInclGst     Float    @default(0)
   sellUnitPriceInclGst Float
   sellGstPercent       Float
   buyingAmountInclGst Float
