@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { Calculator, X, Delete } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Calculator, X, Delete, GripHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 /**
- * A floating, easy-access calculator for financial computations.
- * Optimized for Experimind Labs' project reporting needs.
+ * A DRAGGABLE, high-contrast floating calculator for accurate financial work.
+ * Features a bright high-visibility LCD screen and full expression tracking.
  */
 export default function FloatingCalculator() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,11 +16,68 @@ export default function FloatingCalculator() {
   const [expression, setExpression] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [hasCalculated, setHasCalculated] = useState(false);
+  
+  // Draggable State
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const calculatorRef = useRef<HTMLDivElement>(null);
+
+  // Drag Handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (calculatorRef.current) {
+      const rect = calculatorRef.current.getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+      setIsDragging(true);
+    }
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        setPosition({
+          x: e.clientX - dragOffset.x,
+          y: e.clientY - dragOffset.y
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging, dragOffset]);
+
+  // Initial Position (Bottom Right)
+  useEffect(() => {
+    if (isOpen && position.x === 0 && position.y === 0) {
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      setPosition({
+        x: screenWidth - 320, // Approx width of calc
+        y: screenHeight - 480  // Approx height of calc
+      });
+    }
+  }, [isOpen]);
 
   const handleNumber = (n: string) => {
-    if (display === "0" || display === "Error" || hasCalculated) {
+    if (hasCalculated) {
       setDisplay(n);
       setHasCalculated(false);
+    } else if (display === "0" || display === "Error") {
+      setDisplay(n);
     } else {
       setDisplay(display + n);
     }
@@ -28,22 +85,21 @@ export default function FloatingCalculator() {
 
   const handleOperator = (op: string) => {
     if (display === "Error") return;
-    setExpression(display + " " + op + " ");
+    setExpression(expression + display + " " + op + " ");
     setDisplay("0");
     setHasCalculated(false);
   };
 
   const calculate = () => {
     try {
-      if (!expression) return;
       const fullExpression = expression + display;
-      
-      // Simple and safe math evaluator
+      if (!fullExpression || fullExpression === "0") return;
+
+      // Safe evaluation of basic math
       const cleanExpr = fullExpression.replace(/[^-+/*0-9.]/g, "");
       // eslint-disable-next-line no-eval
       const result = eval(cleanExpr);
       
-      // Format to maximum 4 decimal places, removing trailing zeros
       const formattedResult = Number(Number(result).toFixed(4)).toString();
       
       setHistory([`${fullExpression} = ${formattedResult}`, ...history.slice(0, 2)]);
@@ -52,6 +108,7 @@ export default function FloatingCalculator() {
       setHasCalculated(true);
     } catch (e) {
       setDisplay("Error");
+      setExpression("");
     }
   };
 
@@ -80,84 +137,97 @@ export default function FloatingCalculator() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] print:hidden">
+    <div className="fixed z-[100] print:hidden">
       {!isOpen ? (
         <Button
           onClick={() => setIsOpen(true)}
-          title="Open Calculator"
+          style={{ position: "fixed", bottom: "1.5rem", right: "1.5rem" }}
           className="h-14 w-14 rounded-full shadow-2xl bg-blue-600 hover:bg-blue-700 transition-all hover:scale-110 active:scale-95 group border-2 border-white/20"
         >
           <Calculator className="h-7 w-7 text-white group-hover:rotate-12 transition-transform" />
         </Button>
       ) : (
-        <Card className="w-72 shadow-2xl border-2 border-slate-200 overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-5 duration-200">
-          <CardHeader className="p-3 bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
-            <div className="flex items-center gap-2">
-              <div className="bg-blue-600 p-1 rounded">
-                <Calculator className="h-4 w-4 text-white" />
-              </div>
-              <CardTitle className="text-xs font-black tracking-widest uppercase italic">Experi-Calc</CardTitle>
-            </div>
-            <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setIsOpen(false)}
-                className="h-6 w-6 text-slate-400 hover:text-white hover:bg-white/10"
+        <div 
+          ref={calculatorRef}
+          style={{ 
+            position: "fixed", 
+            left: `${position.x}px`, 
+            top: `${position.y}px`,
+            cursor: isDragging ? "grabbing" : "default"
+          }}
+          className="select-none"
+        >
+          <Card className="w-72 shadow-2xl border-stone-300 ring-4 ring-black/5 animate-in fade-in zoom-in slide-in-from-bottom-5 duration-200">
+            <CardHeader 
+              onMouseDown={handleMouseDown}
+              className="p-3 bg-slate-900 text-white flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing rounded-t-lg transition-colors hover:bg-slate-800"
             >
-              <X className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent className="p-3 space-y-3 bg-white">
-            {/* Display Area */}
-            <div className="bg-slate-900 p-3 rounded-md text-right min-h-[72px] flex flex-col justify-end shadow-inner mb-4">
-              <div className="text-[10px] text-blue-400/50 font-mono h-4 truncate">
-                {expression}
+              <div className="flex items-center gap-2">
+                <GripHorizontal className="h-4 w-4 text-blue-400" />
+                <CardTitle className="text-xs font-black tracking-widest uppercase italic pointer-events-none">
+                  Experi-Calc v2
+                </CardTitle>
               </div>
-              <div className="text-2xl font-bold font-mono text-white truncate break-all">
-                {display}
-              </div>
-            </div>
-
-            {/* Buttons Grid */}
-            <div className="grid grid-cols-4 gap-2">
-              {/* Row 1 */}
-              <CalcButton onClick={clear} className="text-red-500 bg-red-50 hover:bg-red-100 border-red-100">C</CalcButton>
-              <CalcButton onClick={deleteLast} className="bg-slate-50"><Delete className="h-4 w-4 text-slate-600" /></CalcButton>
-              <CalcButton onClick={handlePercent} className="bg-slate-50 text-slate-600">%</CalcButton>
-              <CalcButton onClick={() => handleOperator("/")} className="bg-blue-50 text-blue-700 border-blue-100">÷</CalcButton>
-
-              {/* Row 2 */}
-              <CalcButton onClick={() => handleNumber("7")}>7</CalcButton>
-              <CalcButton onClick={() => handleNumber("8")}>8</CalcButton>
-              <CalcButton onClick={() => handleNumber("9")}>9</CalcButton>
-              <CalcButton onClick={() => handleOperator("*")} className="bg-blue-50 text-blue-700 border-blue-100">×</CalcButton>
-
-              {/* Row 3 */}
-              <CalcButton onClick={() => handleNumber("4")}>4</CalcButton>
-              <CalcButton onClick={() => handleNumber("5")}>5</CalcButton>
-              <CalcButton onClick={() => handleNumber("6")}>6</CalcButton>
-              <CalcButton onClick={() => handleOperator("-")} className="bg-blue-50 text-blue-700 border-blue-100">−</CalcButton>
-
-              {/* Row 4 */}
-              <CalcButton onClick={() => handleNumber("1")}>1</CalcButton>
-              <CalcButton onClick={() => handleNumber("2")}>2</CalcButton>
-              <CalcButton onClick={() => handleNumber("3")}>3</CalcButton>
-              <CalcButton onClick={() => handleOperator("+")} className="bg-blue-50 text-blue-700 border-blue-100">+</CalcButton>
-
-              {/* Row 5 */}
-              <CalcButton onClick={() => handleNumber("0")} className="col-span-2">0</CalcButton>
-              <CalcButton onClick={() => handleNumber(".")}>.</CalcButton>
-              <CalcButton onClick={calculate} className="bg-blue-600 text-white hover:bg-blue-700 font-black shadow-lg border-blue-700 shadow-blue-200 shadow-md transform active:translate-y-0.5 active:shadow-none">=</CalcButton>
-            </div>
-
-            {/* Simple History */}
-            {history.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-slate-100 italic text-[9px] text-slate-400 text-center truncate">
-                    {history[0]}
+              <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsOpen(false);
+                  }}
+                  className="h-6 w-6 text-slate-400 hover:text-white hover:bg-white/10"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="p-3 space-y-3 bg-white">
+              {/* HIGH-CONTRAST BRIGHT DISPLAY */}
+              <div className="bg-blue-50 p-4 rounded-lg text-right min-h-[96px] flex flex-col justify-end shadow-inner border-2 border-blue-100 ring-2 ring-blue-50/50 group relative">
+                <div className="text-xs font-bold text-blue-400/80 font-mono h-5 mb-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                  {expression}
                 </div>
-            )}
-          </CardContent>
-        </Card>
+                <div className="text-3xl font-black font-mono text-blue-950 truncate break-all leading-tight">
+                  {display === "0" && expression ? "" : display}
+                </div>
+                <div className="absolute top-1 left-2 text-[8px] font-black text-blue-300 uppercase tracking-tighter">LCD SCREEN</div>
+              </div>
+
+              {/* Buttons Grid */}
+              <div className="grid grid-cols-4 gap-2">
+                <CalcButton onClick={clear} className="text-red-600 bg-red-100/50 hover:bg-red-100 border-red-200">C</CalcButton>
+                <CalcButton onClick={deleteLast} className="bg-slate-50"><Delete className="h-4 w-4 text-slate-600" /></CalcButton>
+                <CalcButton onClick={handlePercent} className="bg-slate-50 text-slate-700 font-bold">%</CalcButton>
+                <CalcButton onClick={() => handleOperator("/")} className="bg-blue-600 text-white hover:bg-blue-700">÷</CalcButton>
+
+                <CalcButton onClick={() => handleNumber("7")}>7</CalcButton>
+                <CalcButton onClick={() => handleNumber("8")}>8</CalcButton>
+                <CalcButton onClick={() => handleNumber("9")}>9</CalcButton>
+                <CalcButton onClick={() => handleOperator("*")} className="bg-blue-600 text-white hover:bg-blue-700">×</CalcButton>
+
+                <CalcButton onClick={() => handleNumber("4")}>4</CalcButton>
+                <CalcButton onClick={() => handleNumber("5")}>5</CalcButton>
+                <CalcButton onClick={() => handleNumber("6")}>6</CalcButton>
+                <CalcButton onClick={() => handleOperator("-")} className="bg-blue-600 text-white hover:bg-blue-700">−</CalcButton>
+
+                <CalcButton onClick={() => handleNumber("1")}>1</CalcButton>
+                <CalcButton onClick={() => handleNumber("2")}>2</CalcButton>
+                <CalcButton onClick={() => handleNumber("3")}>3</CalcButton>
+                <CalcButton onClick={() => handleOperator("+")} className="bg-blue-600 text-white hover:bg-blue-700">+</CalcButton>
+
+                <CalcButton onClick={() => handleNumber("0")} className="col-span-2">0</CalcButton>
+                <CalcButton onClick={() => handleNumber(".")}>.</CalcButton>
+                <CalcButton onClick={calculate} className="bg-orange-500 text-white hover:bg-orange-600 font-black shadow-lg border-b-4 border-orange-700 transform active:border-b-0 active:translate-y-1 transition-all">=</CalcButton>
+              </div>
+
+              {/* Latest Result Label */}
+              {history.length > 0 && (
+                  <div className="mt-1 pt-1 italic text-[9px] text-blue-300 text-center font-bold">
+                      {history[0]}
+                  </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );
@@ -167,9 +237,13 @@ function CalcButton({ children, onClick, className }: { children: React.ReactNod
   return (
     <Button
       variant="outline"
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
       className={cn(
-        "h-11 p-0 text-base font-bold rounded-lg hover:bg-slate-100 active:scale-95 transition-all shadow-sm border border-slate-200",
+        "h-12 p-0 text-lg font-bold rounded-xl hover:bg-slate-100 active:scale-90 transition-all shadow-md border-slate-200 border-2",
         className
       )}
     >
