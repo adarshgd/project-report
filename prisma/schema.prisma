@@ -50,6 +50,7 @@ model MarginLineItem {
   sellTotalInclGst     Float    @default(0)
   sellUnitPriceInclGst Float
   sellGstPercent       Float
+  buyingTotalInclGst  Float    @default(0)
   buyingAmountInclGst Float
   buyGstPercent       Float
   itcEligible         Boolean  @default(true)

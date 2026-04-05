@@ -36,7 +36,8 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
     initialData?.marginLineItems?.length > 0
       ? initialData.marginLineItems.map((m: any) => ({
           ...m,
-          sellTotalInclGst: m.sellTotalInclGst || m.qty * m.sellUnitPriceInclGst
+          sellTotalInclGst: m.sellTotalInclGst || m.qty * m.sellUnitPriceInclGst,
+          buyingTotalInclGst: m.buyingTotalInclGst || m.qty * m.buyingAmountInclGst
         }))
       : [
           {
@@ -45,6 +46,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
             sellTotalInclGst: 0,
             sellUnitPriceInclGst: 0,
             sellGstPercent: 0,
+            buyingTotalInclGst: 0,
             buyingAmountInclGst: 0,
             buyGstPercent: 0,
             itcEligible: true,
@@ -71,23 +73,31 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
     const newItems = [...marginItems];
     const item = { ...newItems[index], [field]: value };
     
-    // Sync logic for Invoice Total / Qty / Unit Price
+    // Sync logic for Invoice Total / Qty / Unit Price (Selling)
     if (field === "sellTotalInclGst" || field === "qty") {
       const total = Number(field === "sellTotalInclGst" ? value : item.sellTotalInclGst) || 0;
       const qty = Number(field === "qty" ? value : item.qty) || 0;
       item.sellUnitPriceInclGst = qty > 0 ? total / qty : 0;
     }
 
+    // Sync logic for Invoice Total / Qty / Unit Price (Buying)
+    if (field === "buyingTotalInclGst" || field === "qty") {
+      const total = Number(field === "buyingTotalInclGst" ? value : item.buyingTotalInclGst) || 0;
+      const qty = Number(field === "qty" ? value : item.qty) || 0;
+      item.buyingAmountInclGst = qty > 0 ? total / qty : 0;
+    }
+
     newItems[index] = item;
     
     if (index === newItems.length - 1) {
-      if (item.itemService.trim() !== "" || Number(item.sellTotalInclGst) !== 0 || Number(item.buyingAmountInclGst) !== 0) {
+      if (item.itemService.trim() !== "" || Number(item.sellTotalInclGst) !== 0 || Number(item.buyingTotalInclGst) !== 0) {
         newItems.push({
           itemService: "",
           qty: 1,
           sellTotalInclGst: 0,
           sellUnitPriceInclGst: 0,
           sellGstPercent: 0,
+          buyingTotalInclGst: 0,
           buyingAmountInclGst: 0,
           buyGstPercent: 0,
           itcEligible: true,
@@ -193,6 +203,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
       sellTotalInclGst: Number(m.sellTotalInclGst) || 0,
       sellUnitPriceInclGst: Number(m.sellUnitPriceInclGst) || 0,
       sellGstPercent: Number(m.sellGstPercent) || 0,
+      buyingTotalInclGst: Number(m.buyingTotalInclGst) || 0,
       buyingAmountInclGst: Number(m.buyingAmountInclGst) || 0,
       buyGstPercent: Number(m.buyGstPercent) || 0,
       itcEligible: !!m.itcEligible
@@ -428,8 +439,9 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                     <TableHead className="w-[80px]">Sell GST %</TableHead>
                     <TableHead className="w-[90px] bg-slate-50">Sell GST Amt</TableHead>
                     <TableHead className="w-[100px] bg-blue-50 border-r-4 border-slate-300">Sell Tot. Incl GST</TableHead>
-                    <TableHead className="w-[100px]">Buy Unit Prc Incl GST</TableHead>
-                    <TableHead className="w-[100px] bg-blue-50">Total Buy Incl GST</TableHead>
+                    <TableHead className="w-[100px] bg-orange-50 font-bold text-orange-900 ring-2 ring-orange-200">Buy Tot (Invoice Incl GST)</TableHead>
+                    <TableHead className="w-[100px] bg-slate-100 italic">Buy Unit Prc</TableHead>
+                    <TableHead className="w-[100px] bg-blue-50">Total Buy (Value)</TableHead>
                     <TableHead className="w-[80px]">Buy GST %</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Buy Amt Ex GST</TableHead>
                     <TableHead className="w-[90px] bg-slate-50">Buy GST Amt</TableHead>
@@ -507,10 +519,22 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                         <TableCell className="bg-slate-50">{formatCurrency(item.sellGstAmount)}</TableCell>
                         <TableCell className="bg-blue-50 font-medium border-r-4 border-slate-300">{formatCurrency(item.sellTotalInclGst)}</TableCell>
                         
-                        <TableCell>
-                          <Input className="h-8 text-xs p-1" type="number" step="any" value={item.buyingAmountInclGst || ''} onChange={(e) => handleMarginChange(i, "buyingAmountInclGst", Number(e.target.value))} />
+                        <TableCell className="bg-orange-50/30 ring-inset ring-1 ring-orange-100">
+                          <Input 
+                            className="h-8 text-xs font-bold border-orange-200 bg-white" 
+                            type="number" 
+                            step="any"
+                            value={item.buyingTotalInclGst || ''} 
+                            onChange={(e) => handleMarginChange(i, "buyingTotalInclGst", Number(e.target.value))} 
+                            placeholder="Invoice Total"
+                          />
                         </TableCell>
-                        <TableCell className="bg-blue-50 font-medium">{formatCurrency(item.totalBuyingInclGst)}</TableCell>
+                        <TableCell className="bg-slate-100">
+                          <div className="h-8 px-2 flex items-center text-xs font-medium text-slate-500 italic bg-slate-50/50 border rounded-sm border-slate-200">
+                            {Number(item.buyingAmountInclGst).toFixed(2)}
+                          </div>
+                        </TableCell>
+                        <TableCell className="bg-blue-50 font-medium">{formatCurrency((Number(item.qty) || 0) * (Number(item.buyingAmountInclGst) || 0))}</TableCell>
                         <TableCell>
                           <Select value={item.buyGstPercent?.toString() || "0"} onValueChange={(val) => handleMarginChange(i, "buyGstPercent", Number(val))}>
                             <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="%" /></SelectTrigger>
@@ -548,7 +572,8 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                     <TableCell>{formatCurrency(totals.sellGstAmount)}</TableCell>
                     <TableCell className="text-blue-700 border-r-4 border-slate-300">{formatCurrency(totals.sellTotalInclGst)}</TableCell>
                     <TableCell></TableCell>
-                    <TableCell>{formatCurrency(totals.buyingAmountInclGst)}</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell className="text-orange-700">{formatCurrency(totals.buyingAmountInclGst)}</TableCell>
                     <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.buyingAmountExGst)}</TableCell>
                     <TableCell>{formatCurrency(totals.buyGstAmount)}</TableCell>
