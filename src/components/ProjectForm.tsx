@@ -445,7 +445,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                   {calculatedMargins.map((item, i) => (
                     <React.Fragment key={i}>
                       {/* Name Row */}
-                      <TableRow className="bg-slate-100/60 transition-colors border-t-2 border-slate-200">
+                      <TableRow className="bg-slate-100/60 transition-colors border-t-4 border-slate-400">
                         <TableCell rowSpan={2} className="text-center font-bold border-r border-slate-200 text-slate-800 bg-slate-100/60 sticky left-0 z-10 w-[60px]">
                           {i + 1}
                         </TableCell>
