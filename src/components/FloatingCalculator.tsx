@@ -181,15 +181,17 @@ export default function FloatingCalculator() {
               </Button>
             </CardHeader>
             <CardContent className="p-3 space-y-3 bg-white">
-              {/* HIGH-CONTRAST BRIGHT DISPLAY */}
-              <div className="bg-blue-50 p-4 rounded-lg text-right min-h-[96px] flex flex-col justify-end shadow-inner border-2 border-blue-100 ring-2 ring-blue-50/50 group relative">
-                <div className="text-xs font-bold text-blue-400/80 font-mono h-5 mb-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
+              {/* ULTRA-BRIGHT HIGH-CONTRAST DISPLAY */}
+              <div className="bg-white p-4 rounded-xl text-right min-h-[110px] flex flex-col justify-end shadow-[inset_0_2px_10px_rgba(0,0,0,0.1)] border-2 border-blue-500 ring-4 ring-blue-50 transition-all group relative">
+                <div className="text-sm font-black text-blue-500 font-mono h-6 mb-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
                   {expression}
                 </div>
-                <div className="text-3xl font-black font-mono text-blue-950 truncate break-all leading-tight">
+                <div className="text-4xl font-black font-mono text-slate-900 truncate break-all leading-none tracking-tighter">
                   {display === "0" && expression ? "" : display}
                 </div>
-                <div className="absolute top-1 left-2 text-[8px] font-black text-blue-300 uppercase tracking-tighter">LCD SCREEN</div>
+                <div className="absolute top-2 left-3 text-[10px] font-black text-blue-600 bg-blue-50 px-1 rounded uppercase tracking-widest border border-blue-200">
+                  Bright Mode LCD
+                </div>
               </div>
 
               {/* Buttons Grid */}
