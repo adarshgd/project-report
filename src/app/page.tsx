@@ -65,12 +65,11 @@ export default async function DashboardPage() {
   );
 
   const totalProjectCost = projectsAny.reduce((acc: number, p: any) => {
-    const costConsidered = p.marginLineItems.reduce((sum: number, item: any) => {
-      const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
-      return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
+    const totalBuyingInclGst = p.marginLineItems.reduce((sum: number, item: any) => {
+      return sum + (item.buyingAmountInclGst * item.qty);
     }, 0);
     const mediatorCost = p.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
-    return acc + (costConsidered + mediatorCost);
+    return acc + (totalBuyingInclGst + mediatorCost);
   }, 0);
  
   const totalProfit = projectsAny.reduce((acc: number, p: any) => {

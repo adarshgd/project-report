@@ -37,12 +37,11 @@ export default function ProjectList({ projects }: { projects: any[] }) {
     
     const rows = filteredProjects.map((p) => {
       const value = p.marginLineItems.reduce((sum: number, item: any) => sum + (item.sellUnitPriceInclGst * item.qty), 0);
-      const costExGst = p.marginLineItems.reduce((sum: number, item: any) => {
-        const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
-        return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
+      const totalBuyingInclGst = p.marginLineItems.reduce((sum: number, item: any) => {
+        return sum + (item.buyingAmountInclGst * item.qty);
       }, 0);
       const mediatorCost = p.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
-      const cost = costExGst + mediatorCost;
+      const cost = totalBuyingInclGst + mediatorCost;
       const profit = value / (1 + (p.marginLineItems[0]?.sellGstPercent || 0) / 100) - cost; // Rough profit calc for CSV
 
       return [
@@ -182,12 +181,11 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                   </TableCell>
                   <TableCell className="text-right font-medium text-orange-600">
                     {(() => {
-                      const costExGst = project.marginLineItems.reduce((sum: number, item: any) => {
-                        const buyingExGst = (item.buyingAmountInclGst * item.qty) / (1 + item.buyGstPercent / 100);
-                        return sum + (item.itcEligible ? buyingExGst : (item.buyingAmountInclGst * item.qty));
+                      const totalBuyingInclGst = project.marginLineItems.reduce((sum: number, item: any) => {
+                        return sum + (item.buyingAmountInclGst * item.qty);
                       }, 0);
                       const mediatorCost = project.mediators.reduce((sum: number, m: any) => sum + m.amount, 0);
-                      return formatCurrency(costExGst + mediatorCost);
+                      return formatCurrency(totalBuyingInclGst + mediatorCost);
                     })()}
                   </TableCell>
                   <TableCell className="text-right font-bold text-green-700">
