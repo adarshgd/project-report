@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -406,8 +406,7 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
               <Table className="min-w-[1500px] text-xs">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[40px]">Sr.</TableHead>
-                    <TableHead className="w-[180px]">Item / Service</TableHead>
+                    <TableHead className="w-[60px] border-r">Sr.</TableHead>
                     <TableHead className="w-[120px] min-w-[120px]">Qty</TableHead>
                     <TableHead className="w-[100px]">Sell Prc. Incl GST</TableHead>
                     <TableHead className="w-[100px] bg-slate-50">Sell Amt Ex GST</TableHead>
@@ -424,78 +423,98 @@ export default function ProjectForm({ initialData }: { initialData: any }) {
                     <TableHead className="w-[100px] bg-slate-50">Cost Considered</TableHead>
                     <TableHead className="w-[100px] bg-green-100 font-bold text-green-800">Profit A. GST/ITC</TableHead>
                     <TableHead className="w-[80px] bg-blue-50">Margin %</TableHead>
-                    <TableHead></TableHead>
+                    <TableHead className="w-[40px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {calculatedMargins.map((item, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{i + 1}</TableCell>
-                      <TableCell>
-                        <Input className="h-8 text-xs" value={item.itemService} onChange={(e) => handleMarginChange(i, "itemService", e.target.value)} />
-                      </TableCell>
-                      <TableCell className="min-w-[120px]">
-                        <Input 
-                          className="h-8 text-xs px-2 min-w-[100px]" 
-                          type="number" 
-                          step="any"
-                          value={item.qty === 0 ? '0' : (item.qty || '')} 
-                          onChange={(e) => handleMarginChange(i, "qty", e.target.value === '' ? 0 : Number(e.target.value))} 
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input className="h-8 text-xs p-1" type="number" step="any" value={item.sellUnitPriceInclGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceInclGst", Number(e.target.value))} />
-                      </TableCell>
-                      <TableCell className="bg-slate-50">{formatCurrency(item.sellingAmountExGst)}</TableCell>
-                      <TableCell>
-                        <Select value={item.sellGstPercent.toString()} onValueChange={(val) => handleMarginChange(i, "sellGstPercent", Number(val))}>
-                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="%" /></SelectTrigger>
-                          <SelectContent>
-                           {[0, 5, 12, 18, 28].map(p => <SelectItem key={p} value={p.toString()}>{p}%</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="bg-slate-50">{formatCurrency(item.sellGstAmount)}</TableCell>
-                      <TableCell className="bg-blue-50 font-medium border-r-4 border-slate-300">{formatCurrency(item.sellTotalInclGst)}</TableCell>
-                      
-                      <TableCell>
-                        <Input className="h-8 text-xs p-1" type="number" step="any" value={item.buyingAmountInclGst || ''} onChange={(e) => handleMarginChange(i, "buyingAmountInclGst", Number(e.target.value))} />
-                      </TableCell>
-                      <TableCell className="bg-blue-50 font-medium">{formatCurrency(item.totalBuyingInclGst)}</TableCell>
-                      <TableCell>
-                        <Select value={item.buyGstPercent?.toString() || "0"} onValueChange={(val) => handleMarginChange(i, "buyGstPercent", Number(val))}>
-                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="%" /></SelectTrigger>
-                          <SelectContent>
-                           {[0, 5, 12, 18, 28].map(p => <SelectItem key={p} value={p.toString()}>{p}%</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="bg-slate-50">{formatCurrency(item.buyingAmountExGst)}</TableCell>
-                      <TableCell className="bg-slate-50">{formatCurrency(item.buyGstAmount)}</TableCell>
-                      
-                      <TableCell>
-                        <Select value={item.itcEligible ? "yes" : "no"} onValueChange={(val) => handleMarginChange(i, "itcEligible", val === "yes")}>
-                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="ITC" /></SelectTrigger>
-                          <SelectContent>
-                           <SelectItem value="yes">Yes</SelectItem>
-                           <SelectItem value="no">No</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="bg-green-50 text-green-700">{formatCurrency(item.itcClaim)}</TableCell>
-                      <TableCell className="bg-slate-50">{formatCurrency(item.costConsidered)}</TableCell>
-                      <TableCell className="bg-green-100 font-bold text-green-900">{formatCurrency(item.profitAfterGstItc)}</TableCell>
-                      <TableCell className="bg-blue-50 font-medium">{item.marginPercent.toFixed(1)}%</TableCell>
-                      
-                      <TableCell>
-                        <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => removeRow(setMarginItems, marginItems, i)}>
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
+                    <React.Fragment key={i}>
+                      {/* Name Row */}
+                      <TableRow className="bg-slate-100/60 transition-colors border-t-2 border-slate-200">
+                        <TableCell rowSpan={2} className="text-center font-bold border-r border-slate-200 text-slate-800 bg-slate-100/60 sticky left-0 z-10 w-[60px]">
+                          {i + 1}
+                        </TableCell>
+                        <TableCell colSpan={18} className="p-2">
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-tighter shrink-0 mb-[-2px]">Item / Service Name:</span>
+                            <Input 
+                              className="h-9 px-3 text-sm font-semibold border-slate-200 bg-white ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" 
+                              value={item.itemService} 
+                              onChange={(e) => handleMarginChange(i, "itemService", e.target.value)} 
+                              placeholder="Describe the product or service here..."
+                            />
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors ml-auto shrink-0" 
+                              onClick={() => removeRow(setMarginItems, marginItems, i)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                      {/* Calculations Row */}
+                      <TableRow className="hover:bg-transparent border-b-2 border-slate-200">
+                        <TableCell className="min-w-[120px]">
+                          <Input 
+                            className="h-8 text-xs px-2 min-w-[100px]" 
+                            type="number" 
+                            step="any"
+                            value={item.qty === 0 ? '0' : (item.qty || '')} 
+                            onChange={(e) => handleMarginChange(i, "qty", e.target.value === '' ? 0 : Number(e.target.value))} 
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input className="h-8 text-xs p-1" type="number" step="any" value={item.sellUnitPriceInclGst || ''} onChange={(e) => handleMarginChange(i, "sellUnitPriceInclGst", Number(e.target.value))} />
+                        </TableCell>
+                        <TableCell className="bg-slate-50">{formatCurrency(item.sellingAmountExGst)}</TableCell>
+                        <TableCell>
+                          <Select value={item.sellGstPercent.toString()} onValueChange={(val) => handleMarginChange(i, "sellGstPercent", Number(val))}>
+                            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="%" /></SelectTrigger>
+                            <SelectContent>
+                             {[0, 5, 12, 18, 28].map(p => <SelectItem key={p} value={p.toString()}>{p}%</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="bg-slate-50">{formatCurrency(item.sellGstAmount)}</TableCell>
+                        <TableCell className="bg-blue-50 font-medium border-r-4 border-slate-300">{formatCurrency(item.sellTotalInclGst)}</TableCell>
+                        
+                        <TableCell>
+                          <Input className="h-8 text-xs p-1" type="number" step="any" value={item.buyingAmountInclGst || ''} onChange={(e) => handleMarginChange(i, "buyingAmountInclGst", Number(e.target.value))} />
+                        </TableCell>
+                        <TableCell className="bg-blue-50 font-medium">{formatCurrency(item.totalBuyingInclGst)}</TableCell>
+                        <TableCell>
+                          <Select value={item.buyGstPercent?.toString() || "0"} onValueChange={(val) => handleMarginChange(i, "buyGstPercent", Number(val))}>
+                            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="%" /></SelectTrigger>
+                            <SelectContent>
+                             {[0, 5, 12, 18, 28].map(p => <SelectItem key={p} value={p.toString()}>{p}%</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="bg-slate-50">{formatCurrency(item.buyingAmountExGst)}</TableCell>
+                        <TableCell className="bg-slate-50">{formatCurrency(item.buyGstAmount)}</TableCell>
+                        
+                        <TableCell>
+                          <Select value={item.itcEligible ? "yes" : "no"} onValueChange={(val) => handleMarginChange(i, "itcEligible", val === "yes")}>
+                            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="ITC" /></SelectTrigger>
+                            <SelectContent>
+                             <SelectItem value="yes">Yes</SelectItem>
+                             <SelectItem value="no">No</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="bg-green-50 text-green-700">{formatCurrency(item.itcClaim)}</TableCell>
+                        <TableCell className="bg-slate-50">{formatCurrency(item.costConsidered)}</TableCell>
+                        <TableCell className="bg-green-100 font-bold text-green-900">{formatCurrency(item.profitAfterGstItc)}</TableCell>
+                        <TableCell className="bg-blue-50 font-medium">{item.marginPercent.toFixed(1)}%</TableCell>
+                        <TableCell className="p-0"></TableCell>
+                      </TableRow>
+                    </React.Fragment>
                   ))}
                   <TableRow className="font-bold border-t-2 border-slate-900 bg-slate-100/50">
-                    <TableCell colSpan={4} className="text-right py-4 text-slate-900 uppercase tracking-wider">TOTALS</TableCell>
+                    <TableCell colSpan={2} className="text-right py-4 text-slate-900 uppercase tracking-wider">TOTALS</TableCell>
+                    <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.sellingAmountExGst)}</TableCell>
                     <TableCell></TableCell>
                     <TableCell>{formatCurrency(totals.sellGstAmount)}</TableCell>
